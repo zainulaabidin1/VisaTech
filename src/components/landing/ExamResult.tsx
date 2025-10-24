@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { Modal } from "../modal/CertificateCheck";
 
 const examCards = [
   {
@@ -27,6 +29,8 @@ const examCards = [
 ];
 
 export const ExamResultSection = () => {
+  const [openModal, setOpenModal] = useState<string | null>(null);
+
   return (
     <section className="py-24 bg-gradient-to-b from-[#F9FBFD] to-[#E8F4FA]">
       <div className="container mx-auto px-6">
@@ -42,7 +46,6 @@ export const ExamResultSection = () => {
               whileHover={{ scale: 1.03 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
             >
-              {/* Background Image */}
               <motion.div
                 className="absolute inset-0"
                 whileHover={{ scale: 1.1 }}
@@ -56,12 +59,10 @@ export const ExamResultSection = () => {
                 />
               </motion.div>
 
-              {/* Gradient Overlay */}
               <div
                 className={`absolute inset-0 bg-gradient-to-r ${card.overlay} group-hover:from-[#F9C400]/50 group-hover:to-[#005B9E]/50 transition-all duration-700`}
               />
 
-              {/* Decorative Animated Circle */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.25 }}
@@ -75,7 +76,6 @@ export const ExamResultSection = () => {
                 className="absolute bottom-[-50px] right-[10%] w-[220px] h-[220px] blur-3xl rounded-full"
               />
 
-              {/* Content */}
               <div className="relative z-10 h-full p-8 flex flex-col justify-between">
                 <div>
                   <motion.h3
@@ -97,20 +97,95 @@ export const ExamResultSection = () => {
                   </motion.p>
                 </div>
 
-                <motion.a
+                <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1.2 }}
-                  href={card.link}
+                  onClick={() => setOpenModal(card.title)}
                   className="mt-6 inline-block px-8 py-3 font-semibold rounded-full shadow-lg text-[#005B9E] bg-gradient-to-r from-[#F9C400]/90 to-[#FFD84A]/90 hover:from-[#FFD84A] hover:to-[#F9C400] transition-transform transform hover:scale-105 hover:shadow-2xl"
                 >
                   {card.buttonText} →
-                </motion.a>
+                </motion.button>
               </div>
             </motion.div>
           ))}
         </div>
       </div>
+
+      {/* Certificate Modal */}
+      <Modal
+        isOpen={openModal === "Check Certificate Validity"}
+        onClose={() => setOpenModal(null)}
+        title="Check Certificate Validity"
+        onVerify={() => alert("Verifying certificate...")}
+      >
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Passport Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Passport Number"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Certificate Serial Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Certificate Serial Number"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Labor Result Modal */}
+      <Modal
+        isOpen={openModal === "Check Labor Result"}
+        onClose={() => setOpenModal(null)}
+        title="Check Labor Result"
+        onVerify={() => alert("Verifying labor result...")}
+      >
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Passport Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Passport Number"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Occupation Key
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Occupation Key"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Nationality Code
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Nationality Code"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+        </div>
+      </Modal>
     </section>
   );
 };

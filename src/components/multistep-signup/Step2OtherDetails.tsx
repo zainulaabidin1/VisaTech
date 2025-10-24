@@ -1,8 +1,300 @@
-export function Step2OtherDetails({ onPrev, onNext }: any) {
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Upload, AlertTriangle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+
+type StepProps = {
+  onNext?: () => void;
+  onPrev?: () => void;
+};
+
+export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
+  const [formData, setFormData] = useState({
+    personalPhoto: null as File | null,
+    nationalId: "",
+    education: "",
+    experience: "",
+    certification: "",
+    password: "",
+    confirmPassword: "",
+    acknowledge: false,
+  });
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const validate = () => {
+    const newErrors: any = {};
+    const requiredFields = [
+      "nationalId",
+      "education",
+      "experience",
+      "certification",
+      "password",
+      "confirmPassword",
+    ];
+
+    for (const key of requiredFields) {
+      if (!(formData as any)[key]) newErrors[key] = "This field is required";
+    }
+
+    if (!formData.personalPhoto)
+      newErrors.personalPhoto = "Personal photo is required";
+    else {
+      const file = formData.personalPhoto;
+      if (!["image/jpeg", "image/png"].includes(file.type))
+        newErrors.personalPhoto = "Only JPG or PNG allowed";
+      else if (file.size > 2 * 1024 * 1024)
+        newErrors.personalPhoto = "File must be ≤ 2 MB";
+    }
+
+    if (
+      formData.password &&
+      formData.confirmPassword &&
+      formData.password !== formData.confirmPassword
+    ) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (!formData.acknowledge)
+      newErrors.acknowledge = "You must acknowledge responsibility";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validate()) onNext?.();
+  };
+
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Other Details</h2>
-      <p>Coming soon...</p>
-    </div>
-  )
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Upload Personal Photo */}
+      <motion.div whileHover={{ scale: 1.01 }}>
+        <label className="font-medium text-sm text-[#005B9E]">
+          Upload Your Personal Photo<span className="text-red-500">*</span>
+        </label>
+        <label className="cursor-pointer flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00A5E5]/60 rounded-xl py-10 hover:bg-[#E8F4FA] transition relative">
+          <Input
+            type="file"
+            className="hidden"
+            accept=".png,.jpg,.jpeg"
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              setFormData((d) => ({ ...d, personalPhoto: file }));
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => setPreview(reader.result as string);
+                reader.readAsDataURL(file);
+              } else setPreview(null);
+            }}
+          />
+          {preview ? (
+            <img
+              src={preview}
+              alt="preview"
+              className="max-h-32 rounded-md object-cover"
+            />
+          ) : (
+            <>
+              <Upload className="h-6 w-6 text-[#005B9E] mb-2" />
+              <span className="text-[#005B9E] font-medium">
+                Click to upload photo
+              </span>
+              <p className="text-xs text-[#005B9E]/70 mt-1">
+                JPG or PNG, max 2MB
+              </p>
+            </>
+          )}
+        </label>
+        {errors.personalPhoto && (
+          <p className="text-xs text-red-500 mt-1">{errors.personalPhoto}</p>
+        )}
+      </motion.div>
+
+      {/* Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* National ID */}
+        <motion.div whileFocus={{ scale: 1.01 }}>
+          <label className="text-sm font-medium text-[#005B9E]">
+            National ID<span className="text-red-500">*</span>
+          </label>
+          <Input
+            type="text"
+            placeholder="Enter your national ID"
+            value={formData.nationalId}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, nationalId: e.target.value }))
+            }
+            className="border-[#00A5E5]/40 focus:ring-[#00A5E5]"
+          />
+          {errors.nationalId && (
+            <p className="text-xs text-red-500 mt-1">{errors.nationalId}</p>
+          )}
+        </motion.div>
+
+        {/* Education */}
+        <motion.div whileFocus={{ scale: 1.01 }}>
+          <label className="text-sm font-medium text-[#005B9E]">
+            Education Level<span className="text-red-500">*</span>
+          </label>
+          <select
+            value={formData.education}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, education: e.target.value }))
+            }
+            className="w-full border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+          >
+            <option value="">Choose education</option>
+            <option value="High School">High School</option>
+            <option value="Bachelor">Bachelor</option>
+            <option value="Master">Master</option>
+            <option value="PhD">PhD</option>
+          </select>
+          {errors.education && (
+            <p className="text-xs text-red-500 mt-1">{errors.education}</p>
+          )}
+        </motion.div>
+
+        {/* Experience */}
+        <motion.div whileFocus={{ scale: 1.01 }}>
+          <label className="text-sm font-medium text-[#005B9E]">
+            Level of Experience<span className="text-red-500">*</span>
+          </label>
+          <select
+            value={formData.experience}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, experience: e.target.value }))
+            }
+            className="w-full border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+          >
+            <option value="">Choose experience</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Professional">Professional</option>
+          </select>
+          {errors.experience && (
+            <p className="text-xs text-red-500 mt-1">{errors.experience}</p>
+          )}
+        </motion.div>
+
+        {/* Certification */}
+        <motion.div whileFocus={{ scale: 1.01 }}>
+          <label className="text-sm font-medium text-[#005B9E]">
+            Certifications or Training<span className="text-red-500">*</span>
+          </label>
+          <select
+            value={formData.certification}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, certification: e.target.value }))
+            }
+            className="w-full border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+          >
+            <option value="">Choose institute</option>
+            <option value="Coursera">Coursera</option>
+            <option value="Udemy">Udemy</option>
+            <option value="LinkedIn Learning">LinkedIn Learning</option>
+            <option value="Other">Other</option>
+          </select>
+          {errors.certification && (
+            <p className="text-xs text-red-500 mt-1">{errors.certification}</p>
+          )}
+        </motion.div>
+
+        {/* Password */}
+        <motion.div whileFocus={{ scale: 1.01 }}>
+          <label className="text-sm font-medium text-[#005B9E]">
+            Password<span className="text-red-500">*</span>
+          </label>
+          <Input
+            type="password"
+            placeholder="Enter password"
+            value={formData.password}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, password: e.target.value }))
+            }
+            className="border-[#00A5E5]/40 focus:ring-[#00A5E5]"
+          />
+          {errors.password && (
+            <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+          )}
+        </motion.div>
+
+        {/* Confirm Password */}
+        <motion.div whileFocus={{ scale: 1.01 }}>
+          <label className="text-sm font-medium text-[#005B9E]">
+            Confirm Password<span className="text-red-500">*</span>
+          </label>
+          <Input
+            type="password"
+            placeholder="Confirm password"
+            value={formData.confirmPassword}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, confirmPassword: e.target.value }))
+            }
+            className="border-[#00A5E5]/40 focus:ring-[#00A5E5]"
+          />
+          {errors.confirmPassword && (
+            <p className="text-xs text-red-500 mt-1">
+              {errors.confirmPassword}
+            </p>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Acknowledge Checkbox */}
+      <div className="flex items-start gap-3 mt-2">
+        <input
+          type="checkbox"
+          checked={formData.acknowledge}
+          onChange={(e) =>
+            setFormData((d) => ({ ...d, acknowledge: e.target.checked }))
+          }
+          className="mt-1 accent-[#00A5E5]"
+        />
+        <label className="text-sm text-[#005B9E]">
+          I acknowledge that all the entered data is correct and is my
+          responsibility
+        </label>
+      </div>
+      {errors.acknowledge && (
+        <p className="text-xs text-red-500 -mt-2">{errors.acknowledge}</p>
+      )}
+
+      {/* reCAPTCHA Placeholder */}
+      <div className="border border-[#00A5E5]/30 rounded-md p-4 text-center text-sm text-[#005B9E]/70">
+        [reCAPTCHA placeholder here]
+      </div>
+
+      {/* Buttons */}
+      <div className="pt-6 flex justify-between">
+        <Button
+          variant="outline"
+          onClick={() => onPrev?.()}
+          className="border-[#00A5E5] text-[#00A5E5] hover:bg-[#00A5E5] hover:text-white"
+        >
+          Back
+        </Button>
+
+        <Button
+          type="submit"
+          className="bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E] hover:from-[#FFD84A] hover:to-[#F9C400]"
+        >
+          Continue →
+        </Button>
+      </div>
+
+      <p className="text-center text-sm text-[#005B9E]/70">
+        Already have an account?{" "}
+        <span className="text-[#00A5E5] font-medium cursor-pointer">
+          Sign in
+        </span>
+      </p>
+    </form>
+  );
 }

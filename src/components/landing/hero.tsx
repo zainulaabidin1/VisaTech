@@ -3,8 +3,14 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { MultiStepSignupModal } from "../multistep-signup/MultiStepSignupModal";
 
 export default function Hero() {
+
+    const [isOpen, setIsOpen] = useState(false);
+
+
   return (
     <section className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden bg-gradient-to-r from-[#005B9E] to-[#00A5E5] text-white">
       {/* Background Image */}
@@ -61,11 +67,12 @@ export default function Hero() {
           className="flex justify-center gap-4 flex-wrap"
         >
           <Button
-            size="lg"
-            className="bg-[#F9C400] hover:bg-[#e0b200] text-black font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1"
-          >
-            Sign Up
-          </Button>
+        size="lg"
+        onClick={() => setIsOpen(true)}
+        className="bg-[#F9C400] hover:bg-[#e0b200] text-black font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1"
+      >
+        Sign Up
+      </Button>
 
           <Button
             size="lg"
@@ -86,6 +93,8 @@ export default function Hero() {
       >
         <path fill="currentColor" d="M0,64L1440,0L1440,120L0,120Z"></path>
       </svg>
+
+       <MultiStepSignupModal open={isOpen} onClose={() => setIsOpen(false)} />
     </section>
   );
 }
