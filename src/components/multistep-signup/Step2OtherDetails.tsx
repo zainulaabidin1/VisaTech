@@ -9,7 +9,10 @@ import { Input } from "@/components/ui/input";
 type StepProps = {
   onNext?: () => void;
   onPrev?: () => void;
+  onClose?: () => void;
+  isLast?: boolean;
 };
+
 
 export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
   const [formData, setFormData] = useState({
@@ -130,7 +133,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             onChange={(e) =>
               setFormData((d) => ({ ...d, nationalId: e.target.value }))
             }
-            className="border-[#00A5E5]/40 focus:ring-[#00A5E5]"
+            className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
           />
           {errors.nationalId && (
             <p className="text-xs text-red-500 mt-1">{errors.nationalId}</p>
@@ -147,7 +150,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             onChange={(e) =>
               setFormData((d) => ({ ...d, education: e.target.value }))
             }
-            className="w-full border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+            className="w-full text-black border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
           >
             <option value="">Choose education</option>
             <option value="High School">High School</option>
@@ -156,7 +159,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             <option value="PhD">PhD</option>
           </select>
           {errors.education && (
-            <p className="text-xs text-red-500 mt-1">{errors.education}</p>
+            <p className="text-xs text-black text-red-500 mt-1">{errors.education}</p>
           )}
         </motion.div>
 
@@ -170,7 +173,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             onChange={(e) =>
               setFormData((d) => ({ ...d, experience: e.target.value }))
             }
-            className="w-full border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+            className="w-full text-black border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
           >
             <option value="">Choose experience</option>
             <option value="Beginner">Beginner</option>
@@ -193,7 +196,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             onChange={(e) =>
               setFormData((d) => ({ ...d, certification: e.target.value }))
             }
-            className="w-full border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+            className="w-full text-black border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
           >
             <option value="">Choose institute</option>
             <option value="Coursera">Coursera</option>
@@ -218,7 +221,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             onChange={(e) =>
               setFormData((d) => ({ ...d, password: e.target.value }))
             }
-            className="border-[#00A5E5]/40 focus:ring-[#00A5E5]"
+            className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
           />
           {errors.password && (
             <p className="text-xs text-red-500 mt-1">{errors.password}</p>
@@ -237,7 +240,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             onChange={(e) =>
               setFormData((d) => ({ ...d, confirmPassword: e.target.value }))
             }
-            className="border-[#00A5E5]/40 focus:ring-[#00A5E5]"
+            className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
           />
           {errors.confirmPassword && (
             <p className="text-xs text-red-500 mt-1">
@@ -255,7 +258,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
           onChange={(e) =>
             setFormData((d) => ({ ...d, acknowledge: e.target.checked }))
           }
-          className="mt-1 accent-[#00A5E5]"
+          className="mt-1 text-black accent-[#00A5E5]"
         />
         <label className="text-sm text-[#005B9E]">
           I acknowledge that all the entered data is correct and is my

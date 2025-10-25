@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { Modal } from "../modal/CertificateCheck"; // Make sure this points to your Modal component
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [openModal, setOpenModal] = useState<"Check Certificate Validity" | "Check Labor Result" | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -33,14 +33,7 @@ export default function Header() {
           <Link
             href="#about"
             className="relative text-white group"
-          >
-            Test Center
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
-          </Link>
-
-          <Link
-            href="#about"
-            className="relative text-white group"
+            onClick={() => setOpenModal("Check Certificate Validity")}
           >
             Check Certificate
             <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
@@ -49,15 +42,19 @@ export default function Header() {
           <Link
             href="#about"
             className="relative text-white group"
+            onClick={() => setOpenModal("Check Labor Result")}
           >
             Labor Result
             <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
           </Link>
 
-          <Link
-            href="#about"
-            className="relative text-white group"
-          >
+          {/* Other links */}
+          <Link href="#about" className="relative text-white group">
+            Test Center
+            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
+          </Link>
+
+          <Link href="#about" className="relative text-white group">
             Partnership
             <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
           </Link>
@@ -85,33 +82,32 @@ export default function Header() {
             exit={{ height: 0, opacity: 0 }}
             className="md:hidden bg-[#005B9E]/95 backdrop-blur-md px-6 py-4 space-y-4"
           >
+            <button
+              className="block w-full text-left text-white text-lg hover:text-[#F9C400]"
+              onClick={() => { setOpenModal("Check Certificate Validity"); setMenuOpen(false); }}
+            >
+              Check Certificate
+            </button>
+            <button
+              className="block w-full text-left text-white text-lg hover:text-[#F9C400]"
+              onClick={() => { setOpenModal("Check Labor Result"); setMenuOpen(false); }}
+            >
+              Labor Result
+            </button>
+            {/* Other mobile links */}
             <Link
               href="#about"
               className="block text-white text-lg hover:text-[#F9C400]"
               onClick={() => setMenuOpen(false)}
             >
-              About
+              Test Center
             </Link>
             <Link
-              href="#services"
+              href="#about"
               className="block text-white text-lg hover:text-[#F9C400]"
               onClick={() => setMenuOpen(false)}
             >
-              Services
-            </Link>
-            <Link
-              href="#projects"
-              className="block text-white text-lg hover:text-[#F9C400]"
-              onClick={() => setMenuOpen(false)}
-            >
-              Projects
-            </Link>
-            <Link
-              href="#contact"
-              className="block text-white text-lg hover:text-[#F9C400]"
-              onClick={() => setMenuOpen(false)}
-            >
-              Contact
+              Partnership
             </Link>
             <button className="w-full bg-[#F9C400] hover:bg-[#e0b200] text-black font-semibold py-2 rounded-full transition">
               Get in Touch
@@ -119,6 +115,84 @@ export default function Header() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Modals */}
+      <Modal
+        isOpen={openModal === "Check Certificate Validity"} // ✅ boolean
+  onClose={() => setOpenModal(null)}                  // ✅ closes modal
+  title="Check Certificate Validity"                 // ✅ string title
+  onVerify={() => alert("Verifying certificate...")}
+      >
+        <h3 className="text-xl font-bold text-[#005B9E] mb-4">Check Certificate Validity</h3>
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Passport Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Passport Number"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Certificate Serial Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Certificate Serial Number"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={openModal === "Check Labor Result"}        // ✅ boolean
+  onClose={() => setOpenModal(null)}                // ✅ closes modal
+  title="Check Labor Result"                        // ✅ string title
+  onVerify={() => alert("Verifying labor result...")}
+      >
+        <h3 className="text-xl font-bold text-[#005B9E] mb-4">Check Labor Result</h3>
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Passport Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Passport Number"
+              className="w-full border border-gray-300 text-black rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Occupation Key
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Occupation Key"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#005B9E] mb-1">
+              Nationality Code
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Nationality Code"
+              className="w-full border text-black border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A5E5]"
+            />
+          </div>
+
+        </div>
+      </Modal>
     </header>
   );
 }

@@ -2,11 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Import all step components
 import { Step1PassportInfo } from "./Step1PassportInfo";
 import { Step2PersonalInfo } from "../multistep-signup/Step2OtherDetails";
 import { Step3ContactInfo } from "../multistep-signup/Step3ContactInfo";
@@ -20,6 +17,17 @@ export function MultiStepSignupModal({
   onClose: () => void;
 }) {
   const [step, setStep] = useState(1);
+
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    passportNo: "",
+    country: "",
+    nationality: "",
+    dob: "",
+    expiry: "",
+    sex: "",
+  });
 
   const steps = [
     { label: "Passport Info", component: Step1PassportInfo },
@@ -83,19 +91,22 @@ export function MultiStepSignupModal({
             {/* Step Content */}
             <AnimatePresence mode="wait">
               <motion.div
-                key={step}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <CurrentStep
-                  onNext={next}
-                  onPrev={prev}
-                  onClose={onClose}
-                  isLast={step === steps.length}
-                />
-              </motion.div>
+  key={step} // ensures the form inputs re-render correctly on step change
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -20 }}
+  transition={{ duration: 0.3 }}
+>
+  <CurrentStep
+    onNext={next}
+    onPrev={prev}
+    onClose={onClose}
+    isLast={step === steps.length}
+    form={form}
+    setForm={setForm}
+  />
+</motion.div>
+
             </AnimatePresence>
           </motion.div>
         </motion.div>

@@ -1,7 +1,7 @@
-import { clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 // Merge Tailwind + conditional class names cleanly
-export function cn(...inputs) {
-  return twMerge(clsx(inputs))
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(...inputs));
 }

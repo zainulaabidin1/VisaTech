@@ -9,7 +9,10 @@ import { Info } from "lucide-react";
 type StepProps = {
   onNext?: () => void;
   onPrev?: () => void;
+  onClose?: () => void;
+  isLast?: boolean;
 };
+
 
 export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
   const [formData, setFormData] = useState({
@@ -63,7 +66,7 @@ export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
           onChange={(e) =>
             setFormData((d) => ({ ...d, email: e.target.value }))
           }
-          className="border-[#00A5E5]/40 focus:ring-[#00A5E5]"
+          className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
         />
         {errors.email && (
           <p className="text-xs text-red-500 mt-1">{errors.email}</p>
@@ -98,7 +101,7 @@ export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
             onChange={(e) =>
               setFormData((d) => ({ ...d, phone: e.target.value }))
             }
-            className="flex-1 py-2 px-3 text-sm outline-none"
+            className="flex-1 text-black py-2 px-3 text-sm outline-none"
           />
         </div>
         {errors.phone && (

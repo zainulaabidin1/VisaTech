@@ -5,10 +5,14 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { MultiStepSignupModal } from "../multistep-signup/MultiStepSignupModal";
+import SignIn from "../sign-in/Signin";
+import { Modal } from "../modal/ReuseModal";
 
 export default function Hero() {
 
     const [isOpen, setIsOpen] = useState(false);
+    const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
 
 
   return (
@@ -68,7 +72,7 @@ export default function Hero() {
         >
           <Button
         size="lg"
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsSignUpOpen(true)}
         className="bg-[#F9C400] hover:bg-[#e0b200] text-black font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1"
       >
         Sign Up
@@ -76,7 +80,8 @@ export default function Hero() {
 
           <Button
             size="lg"
-            variant="outline"
+          variant="outline"
+          onClick={() => setIsSignInOpen(true)} // Open Sign In modal
             className="border-white text-white hover:bg-white/10 rounded-full px-8 py-3 transition-transform hover:-translate-y-1"
           >
             Sign In
@@ -94,7 +99,11 @@ export default function Hero() {
         <path fill="currentColor" d="M0,64L1440,0L1440,120L0,120Z"></path>
       </svg>
 
-       <MultiStepSignupModal open={isOpen} onClose={() => setIsOpen(false)} />
+       <MultiStepSignupModal open={isSignUpOpen} onClose={() => setIsSignUpOpen(false)} />
+
+      <Modal open={isSignInOpen} onClose={() => setIsSignInOpen(false)}>
+        <SignIn />
+      </Modal>
     </section>
   );
 }
