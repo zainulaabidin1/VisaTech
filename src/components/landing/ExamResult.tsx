@@ -102,7 +102,7 @@ export const ExamResultSection = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1.2 }}
                   onClick={() => setOpenModal(card.title)}
-                  className="mt-6 inline-block px-8 py-3 font-semibold rounded-full shadow-lg text-[#005B9E] bg-gradient-to-r from-[#F9C400]/90 to-[#FFD84A]/90 hover:from-[#FFD84A] hover:to-[#F9C400] transition-transform transform hover:scale-105 hover:shadow-2xl"
+                  className="mt-6 inline-block cursor-pointer px-8 py-3 font-semibold rounded-full shadow-lg text-[#005B9E] bg-gradient-to-r from-[#F9C400]/90 to-[#FFD84A]/90 hover:from-[#FFD84A] hover:to-[#F9C400] transition-transform transform hover:scale-105 hover:shadow-2xl"
                 >
                   {card.buttonText} →
                 </motion.button>

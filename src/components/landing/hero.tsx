@@ -73,7 +73,7 @@ export default function Hero() {
           <Button
         size="lg"
         onClick={() => setIsSignUpOpen(true)}
-        className="bg-[#F9C400] hover:bg-[#e0b200] text-black font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1"
+        className="bg-[#F9C400] hover:bg-[#e0b200] cursor-pointer text-black font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1"
       >
         Sign Up
       </Button>
@@ -82,7 +82,7 @@ export default function Hero() {
             size="lg"
           variant="outline"
           onClick={() => setIsSignInOpen(true)} // Open Sign In modal
-            className="border-white text-white hover:bg-white/10 rounded-full px-8 py-3 transition-transform hover:-translate-y-1"
+            className="border-white text-white cursor-pointer hover:bg-white/10 rounded-full px-8 py-3 transition-transform hover:-translate-y-1"
           >
             Sign In
           </Button>

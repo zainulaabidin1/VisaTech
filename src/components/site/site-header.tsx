@@ -36,7 +36,7 @@ export default function Header() {
             onClick={() => setOpenModal("Check Certificate Validity")}
           >
             Check Certificate
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
+            <span className="absolute cursor-pointer left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
           </Link>
 
           <Link
@@ -45,21 +45,21 @@ export default function Header() {
             onClick={() => setOpenModal("Check Labor Result")}
           >
             Labor Result
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
+            <span className="absolute left-0 -bottom-1 cursor-pointer w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
           </Link>
 
           {/* Other links */}
           <Link href="#about" className="relative text-white group">
             Test Center
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
+            <span className="absolute left-0 -bottom-1 cursor-pointer w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
           </Link>
 
           <Link href="#about" className="relative text-white group">
             Partnership
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#F9C400] transition-all group-hover:w-full"></span>
+            <span className="absolute left-0 -bottom-1 w-0 h-[2px] cursor-pointer bg-[#F9C400] transition-all group-hover:w-full"></span>
           </Link>
 
-          <button className="bg-[#F9C400] hover:bg-[#e0b200] text-black font-semibold px-5 py-2 rounded-full transition">
+          <button className="bg-[#F9C400] hover:bg-[#e0b200] cursor-pointer text-black font-semibold px-5 py-2 rounded-full transition">
             Get in Touch
           </button>
         </nav>

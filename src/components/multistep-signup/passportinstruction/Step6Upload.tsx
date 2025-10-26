@@ -33,35 +33,39 @@ export function Step6UploadPassport({ onNext, onPrev }: StepProps) {
 
   return (
     <motion.form
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       onSubmit={handleSubmit}
-      className="space-y-6"
+      className="space-y-8 text-[#005B9E]"
     >
       {/* Title */}
-      <h2 className="text-xl font-semibold text-[#005B9E]">
-        Upload your passport
+      <h2 className="text-2xl font-semibold text-center">
+        Upload your Passport
       </h2>
+      <p className="text-center text-[#005B9E]/80 text-sm">
+        Make sure your passport image is clear, well-lit, and cropped correctly.
+      </p>
 
-      {/* Upload box */}
+      {/* Upload Box */}
       <div
-        className="border-2 border-dashed border-[#00A5E5]/50 rounded-xl py-12 flex flex-col items-center justify-center hover:bg-[#E8F4FA] transition cursor-pointer"
+        className="relative border-2 border-dashed border-[#00A5E5]/60 rounded-2xl py-14 flex flex-col items-center justify-center hover:bg-[#E8F4FA] transition-all cursor-pointer shadow-sm hover:shadow-md"
         onClick={() => document.getElementById("passportUpload")?.click()}
       >
-        <Upload className="h-10 w-10 text-[#00A5E5] mb-3" />
+        <Upload className="h-12 w-12 text-[#00A5E5] mb-3" />
         {file ? (
-          <p className="text-[#005B9E] font-medium">{file.name}</p>
+          <p className="text-base font-medium text-[#005B9E]">
+            {file.name}
+          </p>
         ) : (
-          <>
-            <p className="text-[#005B9E] font-medium">
-              Drag & drop your files here, or{" "}
-              <span className="text-[#00A5E5] underline cursor-pointer">
-                Browse
-              </span>{" "}
-              to upload
+          <div className="text-center">
+            <p className="text-[#005B9E] font-medium text-base">
+              Drag & drop your file here
             </p>
-          </>
+            <p className="text-sm text-[#00A5E5] mt-1 underline cursor-pointer">
+              or Browse to upload
+            </p>
+          </div>
         )}
         <input
           id="passportUpload"
@@ -72,30 +76,34 @@ export function Step6UploadPassport({ onNext, onPrev }: StepProps) {
         />
       </div>
 
-      {/* Info text */}
+      {/* Info Text */}
       <p className="text-sm text-center text-[#005B9E]/80">
-        Your photo must be in{" "}
-        <span className="font-semibold">PNG, JPG</span> or{" "}
-        <span className="font-semibold">JPEG</span> format, not exceeding 2
-        megabytes.
+        Only <span className="font-semibold">PNG, JPG</span> or{" "}
+        <span className="font-semibold">JPEG</span> formats are supported. Max file size:{" "}
+        <span className="font-semibold">2MB</span>.
       </p>
 
       {/* Buttons */}
-      <div className="flex justify-between pt-6">
+      <div className="flex justify-center gap-4 pt-4">
         <Button
           type="button"
           variant="outline"
           onClick={() => onPrev?.()}
-          className="border-[#00A5E5] text-[#00A5E5] hover:bg-[#00A5E5] hover:text-white"
+          className="border-[#00A5E5] text-[#00A5E5] cursor-pointer hover:bg-[#00A5E5] hover:text-white transition-all px-6"
         >
           Back
         </Button>
 
         <Button
           type="submit"
-          className="bg-[#9ED6D7] text-white hover:bg-[#7FC2C3]"
+          disabled={!file}
+          className={`px-6 cursor-pointer text-white transition-all rounded-md ${
+            file
+              ? "bg-[#00A5E5] hover:bg-[#008fc7]"
+              : "bg-[#b7e0ef] cursor-not-allowed"
+          }`}
         >
-          Upload file
+          {file ? "Continue" : "Upload File"}
         </Button>
       </div>
     </motion.form>

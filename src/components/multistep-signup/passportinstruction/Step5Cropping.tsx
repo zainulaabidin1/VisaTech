@@ -11,7 +11,7 @@ export function Step5CropInstruction({
 }: {
   onNext?: () => void;
   onPrev?: () => void;
-})  {
+}) {
   const [checked, setChecked] = useState(false);
 
   return (
@@ -25,37 +25,26 @@ export function Step5CropInstruction({
         </p>
       </div>
 
-      {/* Example Images */}
+      {/* Example Image */}
       <div className="flex justify-center items-center gap-6 mt-4">
         <div className="flex flex-col items-center">
           <Image
-            src="/images/crop-valid.png"
+            src="/step5passport.png"
             alt="Properly cropped passport example"
             width={300}
             height={200}
             className="rounded-md shadow-md border border-gray-200"
           />
-          <span className="text-green-500 text-xl mt-2">✔️</span>
-        </div>
-        <div className="flex flex-col items-center">
-          <Image
-            src="/images/crop-invalid.png"
-            alt="Incorrectly cropped passport example"
-            width={300}
-            height={200}
-            className="rounded-md shadow-md border border-gray-200"
-          />
-          <span className="text-red-500 text-xl mt-2">❌</span>
         </div>
       </div>
 
-      {/* Custom Checkbox Confirmation */}
+      {/* Confirmation Checkbox */}
       <div
         className="flex items-start gap-2 mt-4 cursor-pointer select-none"
         onClick={() => setChecked(!checked)}
       >
         <div
-          className={`w-5 h-5 border-2 rounded-md flex items-center justify-center ${
+          className={`w-5 h-5 border-2 rounded-md flex items-center cursor-pointer justify-center transition-colors duration-200 ${
             checked
               ? "bg-[#005B9E] border-[#005B9E]"
               : "border-[#005B9E] bg-white"
@@ -73,18 +62,18 @@ export function Step5CropInstruction({
         <Button
           onClick={onPrev}
           variant="outline"
-          className="text-[#005B9E] border-[#005B9E] hover:bg-[#e6f3fa]"
+          className="text-[#005B9E] cursor-pointer border-[#005B9E] hover:bg-[#e6f3fa]"
         >
           Back
         </Button>
         <Button
           disabled={!checked}
           onClick={onNext}
-          className={`${
+          className={`px-6 py-2 cursor-pointer rounded-md text-white transition-colors duration-200 ${
             checked
               ? "bg-[#005B9E] hover:bg-[#00487a]"
               : "bg-[#9cc6e4] cursor-not-allowed"
-          } text-white px-6 py-2 rounded-md`}
+          }`}
         >
           Continue
         </Button>
@@ -92,4 +81,3 @@ export function Step5CropInstruction({
     </div>
   );
 }
-
