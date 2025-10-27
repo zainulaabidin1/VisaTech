@@ -7,7 +7,6 @@ import { FeatureCards } from "../src/components/landing/feature-cards"
 import { Stats } from "../src/components/landing/stats"
 import { Updates } from "../src/components/landing/updates"
 import PartnersSection from "../src/components/landing/partners"
-import { FooterCTA } from "../src/components/landing/footer-cta"
 import Header from "@/components/site/site-header"
 import Footer from "../src/components/site/site-footer"
 import { Parallax } from 'react-scroll-parallax'
@@ -42,18 +41,7 @@ export default function Page() {
 
         <Hero />
       </section>
-      {/* === Section Separator (diagonal) === */}
-      <svg
-        className="text-blue-100 dark:text-slate-800"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1440 120"
-        preserveAspectRatio="none"
-      >
-        <path
-          fill="currentColor"
-          d="M0,32L1440,120L1440,0L0,0Z"
-        ></path>
-      </svg>
+     
 
       {/* === FindCenter Section below Hero === */}
       <section className="relative">
