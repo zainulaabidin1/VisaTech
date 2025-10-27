@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { MapPin, Building2, Briefcase, Navigation } from "lucide-react";
 import MapView from "./MapView";
 
 // === Sample Data ===
@@ -31,104 +32,160 @@ const data = {
   },
 };
 
-type CountryName = keyof typeof data; // "Morocco" | "Pakistan" | "USA"
+type CountryName = keyof typeof data;
 
 export default function FindCenter() {
   const defaultCountry: CountryName = "Morocco";
-  const defaultCity = Object.keys(data[defaultCountry].cities)[0]; // string
+  const defaultCity = Object.keys(data[defaultCountry].cities)[0];
 
-  // ✅ Use string for city state to avoid TypeScript errors
   const [country, setCountry] = useState<CountryName>(defaultCountry);
   const [city, setCity] = useState<string>(defaultCity);
   const [occupation, setOccupation] = useState("Kitchen Worker");
 
   const currentCountry = data[country];
   const currentCityCoords = currentCountry.cities[city as keyof typeof currentCountry.cities];
-  const zoomLevel = city ? 7 : 4;
 
   return (
-    <section className="relative w-full bg-gradient-to-b from-white via-blue-50/40 to-blue-100/10 py-20">
-      <div className="container mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
-        {/* Left Form Section */}
-        <div>
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-[#005B9E] leading-tight">
-            Find test center <br />
-            <span className="text-[#00A5E5]">in your country</span>
+    <section className="relative w-full bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F1F5F9] py-24 overflow-hidden">
+      {/* Background Decorations */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#059669]/5 blur-3xl rounded-full" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#F59E0B]/5 blur-3xl rounded-full" />
+
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#003366]/10 to-[#059669]/10 border border-[#003366]/20 rounded-full px-4 py-2 mb-6">
+            <MapPin className="w-4 h-4 text-[#003366]" />
+            <span className="text-sm font-medium text-[#1E293B]">
+              Test Center Locator
+            </span>
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold text-[#003366] mb-4">
+            Find Test Center
           </h2>
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#F59E0B] to-[#D97706] bg-clip-text text-transparent">
+            In Your Country
+          </h2>
+        </motion.div>
 
-          {/* Country Selector */}
-          <div className="mb-6">
-            <label className="block text-gray-700 font-medium mb-2">Country</label>
-            <select
-              className="w-full bg-[#F8FEFE] border-none py-3 px-4 rounded-lg focus:ring-2 focus:ring-[#00A5E5] text-gray-800"
-              value={country}
-              onChange={(e) => {
-                const selectedCountry = e.target.value as CountryName;
-                setCountry(selectedCountry);
-                const firstCity = Object.keys(data[selectedCountry].cities)[0]; // string
-                setCity(firstCity);
-              }}
-            >
-              {Object.keys(data).map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Occupation Selector */}
-          <div className="mb-6">
-            <label className="block text-gray-700 font-medium mb-2">Occupation</label>
-            <select
-              className="w-full bg-[#F8FEFE] border-none py-3 px-4 rounded-lg focus:ring-2 focus:ring-[#00A5E5] text-gray-800"
-              value={occupation}
-              onChange={(e) => setOccupation(e.target.value)}
-            >
-              <option>Kitchen Worker</option>
-              <option>Teacher</option>
-              <option>Engineer</option>
-              <option>Doctor</option>
-            </select>
-          </div>
-
-          {/* City Selector */}
-          <div className="mb-6">
-            <label className="block text-gray-700 font-medium mb-2">City</label>
-            <select
-              className="w-full bg-[#F8FEFE] border-none py-3 px-4 rounded-lg focus:ring-2 focus:ring-[#00A5E5] text-gray-800"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            >
-              {Object.keys(currentCountry.cities).map((cityName) => (
-                <option key={cityName}>{cityName}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Right Map Section */}
-        <div className="relative h-[450px] w-full rounded-2xl overflow-hidden shadow-xl">
-          <MapView
-            coords={currentCityCoords || currentCountry.coords}
-            zoom={zoomLevel}
-            city={city}
-            country={country}
-            occupation={occupation}
-          />
-
-          {/* Overlay Label */}
+        <div className="grid lg:grid-cols-2 gap-12 items-stretch max-w-7xl mx-auto">
+          {/* Left Form Section */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute top-5 left-5 bg-white/90 backdrop-blur-md px-6 py-4 rounded-xl shadow-md"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            className="bg-white rounded-3xl shadow-xl p-8 border border-[#E2E8F0] h-full flex flex-col"
           >
-            <h3 className="font-bold text-lg text-[#005B9E]">
-              {country} ({city})
-            </h3>
-            <p className="text-gray-600 text-sm">
-  Coordinates: {(currentCityCoords as number[])?.join(", ") || currentCountry.coords.join(", ")}
-</p>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#003366]/10 to-[#004D99]/10 flex items-center justify-center">
+                <Navigation className="w-6 h-6 text-[#003366]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-xl text-[#003366]">Search Centers</h3>
+                <p className="text-sm text-[#64748B]">Find the nearest test location</p>
+              </div>
+            </div>
 
+            {/* Country Selector */}
+            <div className="mb-6">
+              <label className="flex items-center gap-2 text-[#003366] font-semibold mb-3">
+                <Building2 className="w-4 h-4 text-[#F59E0B]" />
+                Country
+              </label>
+              <select
+                className="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] py-4 px-4 rounded-xl focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent text-[#1E293B] font-medium transition-all cursor-pointer hover:border-[#F59E0B]/50"
+                value={country}
+                onChange={(e) => {
+                  const selectedCountry = e.target.value as CountryName;
+                  setCountry(selectedCountry);
+                  const firstCity = Object.keys(data[selectedCountry].cities)[0];
+                  setCity(firstCity);
+                }}
+              >
+                {Object.keys(data).map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Occupation Selector */}
+            <div className="mb-6">
+              <label className="flex items-center gap-2 text-[#003366] font-semibold mb-3">
+                <Briefcase className="w-4 h-4 text-[#059669]" />
+                Occupation
+              </label>
+              <select
+                className="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] py-4 px-4 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-transparent text-[#1E293B] font-medium transition-all cursor-pointer hover:border-[#059669]/50"
+                value={occupation}
+                onChange={(e) => setOccupation(e.target.value)}
+              >
+                <option>Kitchen Worker</option>
+                <option>Teacher</option>
+                <option>Engineer</option>
+                <option>Doctor</option>
+              </select>
+            </div>
+
+            {/* City Selector */}
+            <div className="mb-8">
+              <label className="flex items-center gap-2 text-[#003366] font-semibold mb-3">
+                <MapPin className="w-4 h-4 text-[#003366]" />
+                City
+              </label>
+              <select
+                className="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] py-4 px-4 rounded-xl focus:ring-2 focus:ring-[#003366] focus:border-transparent text-[#1E293B] font-medium transition-all cursor-pointer hover:border-[#003366]/50"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              >
+                {Object.keys(currentCountry.cities).map((cityName) => (
+                  <option key={cityName}>{cityName}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Info Card */}
+            <div className="bg-gradient-to-br from-[#F59E0B]/5 to-[#D97706]/5 rounded-2xl p-6 border border-[#F59E0B]/20 mt-auto">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-5 h-5 text-[#F59E0B]" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#003366] mb-2">Selected Location</h4>
+                  <p className="text-sm text-[#64748B] mb-1">
+                    <span className="font-semibold text-[#1E293B]">{country}</span> - {city}
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    Coordinates: {(currentCityCoords as number[])?.join(", ") || currentCountry.coords.join(", ")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right Map Section */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            className="relative h-[650px] lg:h-[700px]"
+          >
+            
+
+            {/* Note: Replace the placeholder above with actual MapView component */}
+            <MapView
+              coords={currentCityCoords || currentCountry.coords}
+              zoom={city ? 7 : 4}
+              city={city}
+              country={country}
+              occupation={occupation}
+            />
+           
           </motion.div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CloudCog, Upload } from "lucide-react";
+import { AlertTriangle, Upload } from "lucide-react";
 import { PassportInstructionsModal } from "../multistep-signup/passportinstruction/PassportInstructionsModal";
 
 type StepProps = {
@@ -10,61 +10,62 @@ type StepProps = {
   onPrev?: () => void;
   onClose?: () => void;
   isLast?: boolean;
-  form: any; // form state passed from parent
+  form: any;
   setForm: React.Dispatch<React.SetStateAction<any>>;
 };
 
-export function Step1PassportInfo({
-  onNext,
-  onPrev,
-  form,
-  setForm,
-}: StepProps) {
+export function Step1PassportInfo({ onNext, onPrev, form, setForm }: StepProps) {
   const [showInstructions, setShowInstructions] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(name,value)
     setForm((prev: any) => ({ ...prev, [name]: value }));
-    console.log(form)
   };
 
   return (
     <>
-      <form className="space-y-6">
+      <form className="space-y-8">
         {/* Upload Passport Button */}
-        <div className="cursor-pointer flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00A5E5]/60 rounded-xl py-10 hover:bg-[#E8F4FA] transition"
-             onClick={() => setShowInstructions(true)}>
-          <Upload className="h-6 w-6 text-[#005B9E] mb-2" />
-          <span className="text-[#005B9E] font-medium">
+        <div
+          className="cursor-pointer group relative flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00A5E5]/60 rounded-2xl py-12 hover:bg-[#E8F4FA]/70 transition-all duration-300 shadow-sm hover:shadow-lg"
+          onClick={() => setShowInstructions(true)}
+        >
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#005B9E]/5 to-[#00A5E5]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <Upload className="h-8 w-8 text-[#005B9E] mb-3 group-hover:scale-110 transition-transform duration-300" />
+          <span className="text-[#005B9E] font-semibold text-lg tracking-wide">
             Click to Upload Passport
           </span>
+          <p className="text-sm text-[#005B9E]/60 mt-1">
+            JPG, PNG, or PDF up to 10MB
+          </p>
         </div>
 
-        {/* Warning */}
-        <div className="rounded-xl bg-[#FFF9E6] border border-[#F9C400]/50 p-4 flex items-start gap-3">
-          <AlertTriangle className="text-[#F9C400] h-5 w-5 mt-0.5" />
+        {/* Warning Box */}
+        <div className="rounded-xl bg-gradient-to-r from-[#FFF9E6] to-[#FFF3CC] border border-[#F9C400]/40 p-5 flex items-start gap-4 shadow-sm">
+          <AlertTriangle className="text-[#F9C400] h-6 w-6 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-[#F9C400]">Important</h3>
-            <p className="text-sm text-[#005B9E]">
+            <h3 className="font-semibold text-[#F9C400] text-base mb-1">
+              Important
+            </h3>
+            <p className="text-sm text-[#005B9E]/90 leading-relaxed">
               Please enter your information exactly as written in your passport.
             </p>
           </div>
         </div>
 
         {/* Input Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
             { key: "firstName", label: "First Name" },
-            { key: "lastName", label: "Last Name " },
+            { key: "lastName", label: "Last Name" },
             { key: "passportNo", label: "Passport No." },
             { key: "country", label: "Country of Residence" },
             { key: "nationality", label: "Nationality" },
             { key: "dob", label: "Date of Birth", type: "date" },
             { key: "expiry", label: "Date of Passport Expiry", type: "date" },
           ].map((f) => (
-            <div key={f.key}>
-              <label className="text-sm font-medium text-[#005B9E]">
+            <div key={f.key} className="flex flex-col">
+              <label className="text-sm font-medium text-[#005B9E] mb-1.5">
                 {f.label} <span className="text-red-500">*</span>
               </label>
               <input
@@ -73,22 +74,22 @@ export function Step1PassportInfo({
                 value={form[f.key] || ""}
                 onChange={handleChange}
                 required
-                className="border text-black border-[#00A5E5]/40 focus:ring-[#00A5E5] rounded-md px-3 py-2 w-full"
+                className="border border-[#00A5E5]/40 focus:border-[#00A5E5] focus:ring-2 focus:ring-[#00A5E5]/30 rounded-lg px-3 py-2.5 w-full text-black shadow-sm placeholder:text-gray-400 transition-all duration-200"
               />
             </div>
           ))}
         </div>
 
-        {/* Sex */}
+        {/* Sex Field */}
         <div>
           <label className="text-sm font-medium text-[#005B9E]">
             Sex <span className="text-red-500">*</span>
           </label>
-          <div className="flex gap-6 mt-2">
+          <div className="flex gap-8 mt-3">
             {["male", "female"].map((s) => (
               <label
                 key={s}
-                className="flex items-center gap-2 text-sm text-[#005B9E]"
+                className="flex items-center gap-2 text-sm text-[#005B9E] font-medium cursor-pointer"
               >
                 <input
                   type="radio"
@@ -96,6 +97,7 @@ export function Step1PassportInfo({
                   value={s}
                   checked={form.sex === s}
                   onChange={handleChange}
+                  className="w-4 h-4 accent-[#00A5E5] cursor-pointer"
                 />
                 {s.charAt(0).toUpperCase() + s.slice(1)}
               </label>
@@ -104,21 +106,23 @@ export function Step1PassportInfo({
         </div>
 
         {/* Buttons */}
-        <div className="pt-6 flex justify-between">
+        <div className="pt-8 flex justify-between items-center">
           <Button
             variant="outline"
             onClick={() => onPrev?.()}
-            className="border-[#00A5E5] text-[#00A5E5] hover:bg-[#00A5E5] hover:text-white"
+            className="border-[#00A5E5] text-[#00A5E5] font-medium rounded-lg hover:bg-[#00A5E5] hover:text-white transition-all duration-300 px-6 py-2"
           >
-            Back
+            ← Back
           </Button>
 
           <div className="flex items-center gap-3">
-            <p className="text-xs text-[#005B9E]/70">All fields required</p>
+            <p className="text-xs text-[#005B9E]/70 italic">
+              All fields required
+            </p>
             <Button
               type="button"
               onClick={() => onNext?.()}
-              className="bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E]"
+              className="bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E] font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-300"
             >
               Next →
             </Button>
