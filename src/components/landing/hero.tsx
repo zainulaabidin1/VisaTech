@@ -1,11 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, PlayCircle } from "lucide-react";
+import { MultiStepSignupModal } from "../multistep-signup/MultiStepSignupModal"; // ✅ Import your modal
 
 export default function Hero() {
+  // ✅ Modal open state
+  const [openSignup, setOpenSignup] = useState(false);
+
   return (
     <section className="relative w-full min-h-[110vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#FFFFFF] to-[#EAF2FA] text-[#1E293B]">
       {/* ✅ Background Image */}
@@ -62,8 +67,10 @@ export default function Hero() {
           transition={{ duration: 1.2 }}
           className="flex justify-center gap-4 flex-wrap"
         >
+          {/* ✅ Sign Up button opens modal */}
           <Button
             size="lg"
+            onClick={() => setOpenSignup(true)}
             className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:opacity-90 text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex items-center gap-2"
           >
             Sign Up
@@ -80,6 +87,7 @@ export default function Hero() {
           </Button>
         </motion.div>
       </div>
+      <MultiStepSignupModal open={openSignup} onClose={() => setOpenSignup(false)} />
 
       {/* Decorative Bottom Wave */}
       <svg

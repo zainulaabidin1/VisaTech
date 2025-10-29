@@ -8,8 +8,6 @@ import { PassportInstructionsModal } from "../multistep-signup/passportinstructi
 type StepProps = {
   onNext?: () => void;
   onPrev?: () => void;
-  onClose?: () => void;
-  isLast?: boolean;
   form: any;
   setForm: React.Dispatch<React.SetStateAction<any>>;
 };
@@ -25,15 +23,25 @@ export function Step1PassportInfo({ onNext, onPrev, form, setForm }: StepProps) 
   return (
     <>
       <form className="space-y-8">
-        {/* Upload Passport Button */}
+        {/* Upload Passport Section */}
         <div
           className="cursor-pointer group relative flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00A5E5]/60 rounded-2xl py-12 hover:bg-[#E8F4FA]/70 transition-all duration-300 shadow-sm hover:shadow-lg"
           onClick={() => setShowInstructions(true)}
         >
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#005B9E]/5 to-[#00A5E5]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <Upload className="h-8 w-8 text-[#005B9E] mb-3 group-hover:scale-110 transition-transform duration-300" />
+          <div className="mt-6 flex justify-center">
+  {form.passportImage ? (
+    <img
+      src={form.passportImage}
+      alt="Passport Preview"
+      className="h-40 w-auto rounded-xl shadow-md border border-[#00A5E5]/40 object-cover transition-all duration-300 hover:scale-[1.02]"
+    />
+  ) : (
+    <Upload className="h-10 w-10 text-[#005B9E] mb-3 transition-transform duration-300 group-hover:scale-110" />
+  )}
+</div>
+
           <span className="text-[#005B9E] font-semibold text-lg tracking-wide">
-            Click to Upload Passport
+            {form.passportImage ? "Change Passport" : "Click to Upload Passport"}
           </span>
           <p className="text-sm text-[#005B9E]/60 mt-1">
             JPG, PNG, or PDF up to 10MB
@@ -133,9 +141,12 @@ export function Step1PassportInfo({ onNext, onPrev, form, setForm }: StepProps) 
       {/* Passport Instructions Modal */}
       {showInstructions && (
         <PassportInstructionsModal
-          open={showInstructions}
-          onClose={() => setShowInstructions(false)}
-        />
+  open={showInstructions}
+  onClose={() => setShowInstructions(false)}
+  form={form}
+  setForm={setForm}
+/>
+
       )}
     </>
   );

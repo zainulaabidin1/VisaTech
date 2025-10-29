@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Upload, AlertTriangle } from "lucide-react";
+import { Upload, CheckCircle2, Shield, GraduationCap, Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 type StepProps = {
@@ -12,7 +12,6 @@ type StepProps = {
   onClose?: () => void;
   isLast?: boolean;
 };
-
 
 export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
   const [formData, setFormData] = useState({
@@ -75,13 +74,14 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-7 bg-[#F8FAFC] p-6 rounded-2xl shadow-sm border border-[#E2E8F0]">
       {/* Upload Personal Photo */}
       <motion.div whileHover={{ scale: 1.01 }}>
-        <label className="font-medium text-sm text-[#005B9E]">
-          Upload Your Personal Photo<span className="text-red-500">*</span>
+        <label className="font-semibold text-sm text-[#003366] flex items-center gap-2">
+          <Shield className="h-4 w-4 text-[#64748B]" />
+          Upload Your Personal Photo<span className="text-[#DC2626]">*</span>
         </label>
-        <label className="cursor-pointer flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00A5E5]/60 rounded-xl py-10 hover:bg-[#E8F4FA] transition relative">
+        <label className="cursor-pointer flex flex-col items-center justify-center w-full border-2 border-dashed border-[#94A3B8]/50 bg-[#FFFFFF] rounded-xl py-10 hover:bg-[#F1F5F9] transition relative mt-2">
           <Input
             type="file"
             className="hidden"
@@ -100,57 +100,48 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             <img
               src={preview}
               alt="preview"
-              className="max-h-32 rounded-md object-cover"
+              className="max-h-32 rounded-lg shadow-sm border border-[#E2E8F0] object-cover"
             />
           ) : (
             <>
-              <Upload className="h-6 w-6 text-[#005B9E] mb-2" />
-              <span className="text-[#005B9E] font-medium">
+              <Upload className="h-8 w-8 text-[#003366] mb-2 opacity-80" />
+              <span className="text-[#1E293B] font-medium">
                 Click to upload photo
               </span>
-              <p className="text-xs text-[#005B9E]/70 mt-1">
-                JPG or PNG, max 2MB
-              </p>
+              <p className="text-xs text-[#64748B] mt-1">JPG or PNG, max 2MB</p>
             </>
           )}
         </label>
         {errors.personalPhoto && (
-          <p className="text-xs text-red-500 mt-1">{errors.personalPhoto}</p>
+          <p className="text-xs text-[#DC2626] mt-1">{errors.personalPhoto}</p>
         )}
       </motion.div>
 
       {/* Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* National ID */}
-        <motion.div whileFocus={{ scale: 1.01 }}>
-          <label className="text-sm font-medium text-[#005B9E]">
-            National ID<span className="text-red-500">*</span>
-          </label>
+        <div>
+          <label className="text-sm font-semibold text-[#003366]">National ID<span className="text-[#DC2626]">*</span></label>
           <Input
             type="text"
             placeholder="Enter your national ID"
             value={formData.nationalId}
-            onChange={(e) =>
-              setFormData((d) => ({ ...d, nationalId: e.target.value }))
-            }
-            className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
+            onChange={(e) => setFormData((d) => ({ ...d, nationalId: e.target.value }))}
+            className="border-[#E2E8F0] text-[#1E293B] focus:ring-[#003366] focus:border-[#003366]"
           />
-          {errors.nationalId && (
-            <p className="text-xs text-red-500 mt-1">{errors.nationalId}</p>
-          )}
-        </motion.div>
+          {errors.nationalId && <p className="text-xs text-[#DC2626] mt-1">{errors.nationalId}</p>}
+        </div>
 
         {/* Education */}
-        <motion.div whileFocus={{ scale: 1.01 }}>
-          <label className="text-sm font-medium text-[#005B9E]">
-            Education Level<span className="text-red-500">*</span>
+        <div>
+          <label className="text-sm font-semibold text-[#003366] flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-[#64748B]" />
+            Education Level<span className="text-[#DC2626]">*</span>
           </label>
           <select
             value={formData.education}
-            onChange={(e) =>
-              setFormData((d) => ({ ...d, education: e.target.value }))
-            }
-            className="w-full text-black border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+            onChange={(e) => setFormData((d) => ({ ...d, education: e.target.value }))}
+            className="w-full text-[#1E293B] border border-[#E2E8F0] rounded-md py-2 px-3 text-sm bg-white focus:ring-[#003366] focus:border-[#003366] outline-none"
           >
             <option value="">Choose education</option>
             <option value="High School">High School</option>
@@ -158,22 +149,16 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             <option value="Master">Master</option>
             <option value="PhD">PhD</option>
           </select>
-          {errors.education && (
-            <p className="text-xs text-black text-red-500 mt-1">{errors.education}</p>
-          )}
-        </motion.div>
+          {errors.education && <p className="text-xs text-[#DC2626] mt-1">{errors.education}</p>}
+        </div>
 
         {/* Experience */}
-        <motion.div whileFocus={{ scale: 1.01 }}>
-          <label className="text-sm font-medium text-[#005B9E]">
-            Level of Experience<span className="text-red-500">*</span>
-          </label>
+        <div>
+          <label className="text-sm font-semibold text-[#003366]">Experience Level<span className="text-[#DC2626]">*</span></label>
           <select
             value={formData.experience}
-            onChange={(e) =>
-              setFormData((d) => ({ ...d, experience: e.target.value }))
-            }
-            className="w-full text-black border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+            onChange={(e) => setFormData((d) => ({ ...d, experience: e.target.value }))}
+            className="w-full text-[#1E293B] border border-[#E2E8F0] rounded-md py-2 px-3 text-sm bg-white focus:ring-[#003366] focus:border-[#003366] outline-none"
           >
             <option value="">Choose experience</option>
             <option value="Beginner">Beginner</option>
@@ -181,97 +166,73 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
             <option value="Advanced">Advanced</option>
             <option value="Professional">Professional</option>
           </select>
-          {errors.experience && (
-            <p className="text-xs text-red-500 mt-1">{errors.experience}</p>
-          )}
-        </motion.div>
+          {errors.experience && <p className="text-xs text-[#DC2626] mt-1">{errors.experience}</p>}
+        </div>
 
         {/* Certification */}
-        <motion.div whileFocus={{ scale: 1.01 }}>
-          <label className="text-sm font-medium text-[#005B9E]">
-            Certifications or Training<span className="text-red-500">*</span>
-          </label>
+        <div>
+          <label className="text-sm font-semibold text-[#003366]">Certifications<span className="text-[#DC2626]">*</span></label>
           <select
             value={formData.certification}
-            onChange={(e) =>
-              setFormData((d) => ({ ...d, certification: e.target.value }))
-            }
-            className="w-full text-black border border-[#00A5E5]/40 rounded-md py-2 px-3 text-sm focus:ring-[#00A5E5] outline-none"
+            onChange={(e) => setFormData((d) => ({ ...d, certification: e.target.value }))}
+            className="w-full text-[#1E293B] border border-[#E2E8F0] rounded-md py-2 px-3 text-sm bg-white focus:ring-[#003366] focus:border-[#003366] outline-none"
           >
-            <option value="">Choose institute</option>
+            <option value="">Select certification</option>
             <option value="Coursera">Coursera</option>
             <option value="Udemy">Udemy</option>
             <option value="LinkedIn Learning">LinkedIn Learning</option>
             <option value="Other">Other</option>
           </select>
-          {errors.certification && (
-            <p className="text-xs text-red-500 mt-1">{errors.certification}</p>
-          )}
-        </motion.div>
+          {errors.certification && <p className="text-xs text-[#DC2626] mt-1">{errors.certification}</p>}
+        </div>
 
         {/* Password */}
-        <motion.div whileFocus={{ scale: 1.01 }}>
-          <label className="text-sm font-medium text-[#005B9E]">
-            Password<span className="text-red-500">*</span>
+        <div>
+          <label className="text-sm font-semibold text-[#003366] flex items-center gap-2">
+            <Lock className="h-4 w-4 text-[#64748B]" />
+            Password<span className="text-[#DC2626]">*</span>
           </label>
           <Input
             type="password"
             placeholder="Enter password"
             value={formData.password}
-            onChange={(e) =>
-              setFormData((d) => ({ ...d, password: e.target.value }))
-            }
-            className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
+            onChange={(e) => setFormData((d) => ({ ...d, password: e.target.value }))}
+            className="border-[#E2E8F0] text-[#1E293B] focus:ring-[#003366] focus:border-[#003366]"
           />
-          {errors.password && (
-            <p className="text-xs text-red-500 mt-1">{errors.password}</p>
-          )}
-        </motion.div>
+          {errors.password && <p className="text-xs text-[#DC2626] mt-1">{errors.password}</p>}
+        </div>
 
         {/* Confirm Password */}
-        <motion.div whileFocus={{ scale: 1.01 }}>
-          <label className="text-sm font-medium text-[#005B9E]">
-            Confirm Password<span className="text-red-500">*</span>
-          </label>
+        <div>
+          <label className="text-sm font-semibold text-[#003366]">Confirm Password<span className="text-[#DC2626]">*</span></label>
           <Input
             type="password"
             placeholder="Confirm password"
             value={formData.confirmPassword}
-            onChange={(e) =>
-              setFormData((d) => ({ ...d, confirmPassword: e.target.value }))
-            }
-            className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
+            onChange={(e) => setFormData((d) => ({ ...d, confirmPassword: e.target.value }))}
+            className="border-[#E2E8F0] text-[#1E293B] focus:ring-[#003366] focus:border-[#003366]"
           />
-          {errors.confirmPassword && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.confirmPassword}
-            </p>
-          )}
-        </motion.div>
+          {errors.confirmPassword && <p className="text-xs text-[#DC2626] mt-1">{errors.confirmPassword}</p>}
+        </div>
       </div>
 
-      {/* Acknowledge Checkbox */}
-      <div className="flex items-start gap-3 mt-2">
+      {/* Acknowledge */}
+      <div className="flex items-start gap-3 mt-4 bg-[#FFFFFF] border border-[#E2E8F0] rounded-md p-4 shadow-sm">
         <input
           type="checkbox"
           checked={formData.acknowledge}
-          onChange={(e) =>
-            setFormData((d) => ({ ...d, acknowledge: e.target.checked }))
-          }
-          className="mt-1 text-black accent-[#00A5E5]"
+          onChange={(e) => setFormData((d) => ({ ...d, acknowledge: e.target.checked }))}
+          className="mt-1 accent-[#003366]"
         />
-        <label className="text-sm text-[#005B9E]">
-          I acknowledge that all the entered data is correct and is my
-          responsibility
+        <label className="text-sm text-[#1E293B] leading-relaxed">
+          I acknowledge that all the entered data is correct and my responsibility.
         </label>
       </div>
-      {errors.acknowledge && (
-        <p className="text-xs text-red-500 -mt-2">{errors.acknowledge}</p>
-      )}
+      {errors.acknowledge && <p className="text-xs text-[#DC2626] -mt-2">{errors.acknowledge}</p>}
 
       {/* reCAPTCHA Placeholder */}
-      <div className="border border-[#00A5E5]/30 rounded-md p-4 text-center text-sm text-[#005B9E]/70">
-        [reCAPTCHA placeholder here]
+      <div className="border border-[#E2E8F0] rounded-md p-4 text-center text-sm text-[#64748B] bg-white shadow-sm">
+        [reCAPTCHA placeholder]
       </div>
 
       {/* Buttons */}
@@ -279,22 +240,22 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
         <Button
           variant="outline"
           onClick={() => onPrev?.()}
-          className="border-[#00A5E5] text-[#00A5E5] hover:bg-[#00A5E5] hover:text-white"
+          className="border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition"
         >
-          Back
+          ← Back
         </Button>
 
         <Button
           type="submit"
-          className="bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E] hover:from-[#FFD84A] hover:to-[#F9C400]"
+          className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white font-semibold shadow-md hover:from-[#D97706] hover:to-[#B45309]"
         >
           Continue →
         </Button>
       </div>
 
-      <p className="text-center text-sm text-[#005B9E]/70">
+      <p className="text-center text-sm text-[#64748B] mt-4">
         Already have an account?{" "}
-        <span className="text-[#00A5E5] font-medium cursor-pointer">
+        <span className="text-[#003366] font-medium cursor-pointer hover:underline">
           Sign in
         </span>
       </p>
