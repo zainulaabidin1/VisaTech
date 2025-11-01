@@ -3,15 +3,15 @@
 import { motion } from "framer-motion"
 import Hero from "@/components/landing/hero"
 import FindCenter from "@/components/landing/FindCenter" // ✅ import FindCenter
-import { FeatureCards } from "../src/components/landing/feature-cards"
-import { Stats } from "../src/components/landing/stats"
-import { Updates } from "../src/components/landing/updates"
-import PartnersSection from "../src/components/landing/partners"
+import { FeatureCards } from "../components/landing/feature-cards"
+import { Stats } from "../components/landing/stats"
+import { Updates } from "../components/landing/updates"
+import PartnersSection from "../components/landing/partners"
 import Header from "@/components/site/site-header"
-import Footer from "../src/components/site/site-footer"
+import Footer from "../components/site/site-footer"
 import { Parallax } from 'react-scroll-parallax'
 import { useState, useEffect } from "react"
-import { MultiStepSignupModal } from "../src/components/multistep-signup/MultiStepSignupModal"
+import { MultiStepSignupModal } from "../components/multistep-signup/MultiStepSignupModal"
 import { ExamResultSection } from "@/components/landing/ExamResult"
 import Advantages from "@/components/landing/Advantages"
 
