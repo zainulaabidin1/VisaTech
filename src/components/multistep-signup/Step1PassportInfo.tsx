@@ -14,31 +14,91 @@ type StepProps = {
 
 export function Step1PassportInfo({ onNext, onPrev, form, setForm }: StepProps) {
   const [showInstructions, setShowInstructions] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev: any) => ({ ...prev, [name]: value }));
   };
 
+  const handleStep1Submit = async () => {
+    // Basic validation
+    const requiredFields = ['firstName', 'lastName', 'passportNo', 'country', 'nationality', 'dob', 'expiry', 'sex'];
+    const missingFields = requiredFields.filter(field => !form[field]);
+    
+    if (missingFields.length > 0) {
+      alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const formData = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        country: form.country,
+        passportNo: form.passportNo,
+        nationality: form.nationality,
+        sex: form.sex,
+        dob: form.dob,
+        expiryDate: form.expiry,
+        passportImage: form.passportImage || null
+      };
+
+      // API call to save to database
+      const response = await fetch('http://localhost:5000/api/passports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Remove Authorization for now - we'll add it after user creation
+          // 'Authorization': `Bearer ${userToken}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('✅ Passport data saved to database:', result.data);
+        // Move to next step only if save was successful
+        onNext?.();
+      } else {
+        // Show error message from backend
+        alert(result.message || 'Failed to save passport information');
+        console.error('Backend error:', result);
+      }
+    } catch (error) {
+      console.error('Failed to save passport data:', error);
+      alert('Network error. Please check if backend is running on port 5000');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleNextClick = () => {
+    handleStep1Submit();
+  };
+
   return (
     <>
-      <form className="space-y-8">
+      <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
         {/* Upload Passport Section */}
         <div
           className="cursor-pointer group relative flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00A5E5]/60 rounded-2xl py-12 hover:bg-[#E8F4FA]/70 transition-all duration-300 shadow-sm hover:shadow-lg"
           onClick={() => setShowInstructions(true)}
         >
           <div className="mt-6 flex justify-center">
-  {form.passportImage ? (
-    <img
-      src={form.passportImage}
-      alt="Passport Preview"
-      className="h-40 w-auto rounded-xl shadow-md border border-[#00A5E5]/40 object-cover transition-all duration-300 hover:scale-[1.02]"
-    />
-  ) : (
-    <Upload className="h-10 w-10 text-[#005B9E] mb-3 transition-transform duration-300 group-hover:scale-110" />
-  )}
-</div>
+            {form.passportImage ? (
+              <img
+                src={form.passportImage}
+                alt="Passport Preview"
+                className="h-40 w-auto rounded-xl shadow-md border border-[#00A5E5]/40 object-cover transition-all duration-300 hover:scale-[1.02]"
+              />
+            ) : (
+              <Upload className="h-10 w-10 text-[#005B9E] mb-3 transition-transform duration-300 group-hover:scale-110" />
+            )}
+          </div>
 
           <span className="text-[#005B9E] font-semibold text-lg tracking-wide">
             {form.passportImage ? "Change Passport" : "Click to Upload Passport"}
@@ -129,10 +189,11 @@ export function Step1PassportInfo({ onNext, onPrev, form, setForm }: StepProps) 
             </p>
             <Button
               type="button"
-              onClick={() => onNext?.()}
-              className="bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E] font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-300"
+              onClick={handleNextClick}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E] font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next →
+              {isLoading ? "Saving to Database..." : "Next →"}
             </Button>
           </div>
         </div>
@@ -141,12 +202,11 @@ export function Step1PassportInfo({ onNext, onPrev, form, setForm }: StepProps) 
       {/* Passport Instructions Modal */}
       {showInstructions && (
         <PassportInstructionsModal
-  open={showInstructions}
-  onClose={() => setShowInstructions(false)}
-  form={form}
-  setForm={setForm}
-/>
-
+          open={showInstructions}
+          onClose={() => setShowInstructions(false)}
+          form={form}
+          setForm={setForm}
+        />
       )}
     </>
   );

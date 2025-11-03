@@ -27,6 +27,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [preview, setPreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validate = () => {
     const newErrors: any = {};
@@ -61,6 +62,10 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
+    if (formData.password && formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
     if (!formData.acknowledge)
       newErrors.acknowledge = "You must acknowledge responsibility";
 
@@ -68,9 +73,63 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) onNext?.();
+    
+    if (!validate()) return;
+    
+    setIsLoading(true);
+
+    try {
+      // Convert file to base64 for storage
+      let personalPhotoBase64 = null;
+      if (formData.personalPhoto) {
+        personalPhotoBase64 = await fileToBase64(formData.personalPhoto);
+      }
+
+      const formDataToSend = {
+        nationalId: formData.nationalId,
+        education: formData.education,
+        experience: formData.experience,
+        certification: formData.certification,
+        password: formData.password,
+        personalPhoto: personalPhotoBase64
+      };
+
+      // API call to save personal info to database
+      const response = await fetch('http://localhost:5000/api/users/personal-info', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formDataToSend)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('✅ Personal info saved to database:', result.data);
+        onNext?.();
+      } else {
+        alert(result.message || 'Failed to save personal information');
+        console.error('Backend error:', result);
+      }
+    } catch (error) {
+      console.error('Failed to save personal data:', error);
+      alert('Network error. Please check if backend is running on port 5000');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Helper function to convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
   };
 
   return (
@@ -247,9 +306,10 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
 
         <Button
           type="submit"
-          className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white font-semibold shadow-md hover:from-[#D97706] hover:to-[#B45309]"
+          disabled={isLoading}
+          className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white font-semibold shadow-md hover:from-[#D97706] hover:to-[#B45309] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Continue →
+          {isLoading ? "Saving..." : "Continue →"}
         </Button>
       </div>
 

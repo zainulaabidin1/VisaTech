@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, PlayCircle } from "lucide-react";
 
 export default function Hero() {
-  const router = useRouter(); // ✅ For navigation
+  const router = useRouter(); // For navigation
 
   return (
     <section className="relative w-full min-h-[110vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#FFFFFF] to-[#EAF2FA] text-[#1E293B]">
-      {/* ✅ Background Image */}
+      {/*  Background Image */}
       <Image
         src="/hero.png"
         alt="Background"
@@ -20,7 +20,7 @@ export default function Hero() {
         priority
       />
 
-      {/* ✅ Very Light Overlay (10%) */}
+      {/* Very Light Overlay (10%) */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#FFFFFF]/10 via-[#F8FAFC]/10 to-[#EAF2FA]/10" />
 
       {/* Animated Accent Glow */}
@@ -65,11 +65,11 @@ export default function Hero() {
           transition={{ duration: 1.2 }}
           className="flex justify-center gap-4 flex-wrap"
         >
-          {/* ✅ Navigate to /signup */}
+          {/* Navigate to /signup */}
           <Button
             size="lg"
             onClick={() => router.push("/signup")}
-            className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:opacity-90 text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex items-center gap-2"
+            className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] cursor-pointer hover:opacity-90 text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex items-center gap-2"
           >
             Sign Up
             <ArrowRight className="w-5 h-5" />
@@ -78,7 +78,8 @@ export default function Hero() {
           <Button
             size="lg"
             variant="outline"
-            className="border-[#E2E8F0] text-[#003366] hover:bg-[#F1F5F9] rounded-full px-8 py-4 transition-transform hover:-translate-y-1 flex items-center gap-2"
+            onClick={() => router.push("/signin")}
+            className="border-[#E2E8F0] text-[#003366] cursor-pointer hover:bg-[#F1F5F9] rounded-full px-8 py-4 transition-transform hover:-translate-y-1 flex items-center gap-2"
           >
             <PlayCircle className="w-5 h-5 text-[#64748B]" />
             Sign In
