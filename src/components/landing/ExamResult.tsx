@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Modal } from "../modal/CertificateCheck";
-import { Award, FileCheck, ArrowRight, Shield, CheckCircle, Sparkles } from "lucide-react";
+import { Award, FileCheck, ArrowRight, Shield, CheckCircle, Sparkles, XCircle, CheckCircle2 } from "lucide-react";
 
 const examCards = [
   {
@@ -35,6 +35,130 @@ const examCards = [
 
 export const ExamResultSection = () => {
   const [openModal, setOpenModal] = useState<string | null>(null);
+  const [passportNumber, setPassportNumber] = useState("");
+  const [nationalityCode, setNationalityCode] = useState("");
+  const [verificationResult, setVerificationResult] = useState<{
+    success: boolean;
+    message: string;
+    tokenNumber?: string;
+  } | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  const verifyCertificate = async () => {
+    if (!passportNumber.trim()) {
+      alert("Please enter passport number");
+      return;
+    }
+
+    setIsVerifying(true);
+    setVerificationResult(null);
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/passports/verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          passport_number: passportNumber,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        if (result.data.token_number) {
+          setVerificationResult({
+            success: true,
+            message: "Congratulations! You have successfully received your token number.",
+            tokenNumber: result.data.token_number,
+          });
+        } else {
+          setVerificationResult({
+            success: false,
+            message: "Passport number found but no token number assigned yet.",
+          });
+        }
+      } else {
+        setVerificationResult({
+          success: false,
+          message: result.message || "Passport number not found in our system.",
+        });
+      }
+    } catch (error) {
+      console.error("Verification error:", error);
+      setVerificationResult({
+        success: false,
+        message: "Error verifying passport number. Please try again.",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const verifyLaborResult = async () => {
+    if (!passportNumber.trim() || !nationalityCode.trim()) {
+      alert("Please enter both passport number and nationality code");
+      return;
+    }
+
+    setIsVerifying(true);
+    setVerificationResult(null);
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/passports/verify-labor`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          passport_number: passportNumber,
+          nationality: nationalityCode,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        if (result.data.token_number) {
+          setVerificationResult({
+            success: true,
+            message: "Congratulations! You have successfully received your token number.",
+            tokenNumber: result.data.token_number,
+          });
+        } else {
+          setVerificationResult({
+            success: false,
+            message: "Passport and nationality found but no token number assigned yet.",
+          });
+        }
+      } else {
+        setVerificationResult({
+          success: false,
+          message: result.message || "Passport number and nationality combination not found.",
+        });
+      }
+    } catch (error) {
+      console.error("Labor verification error:", error);
+      setVerificationResult({
+        success: false,
+        message: "Error verifying labor result. Please try again.",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const resetForm = () => {
+    setPassportNumber("");
+    setNationalityCode("");
+    setVerificationResult(null);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(null);
+    resetForm();
+  };
 
   return (
     <section className="py-24 bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F1F5F9] relative overflow-hidden">
@@ -209,11 +333,12 @@ export const ExamResultSection = () => {
       {/* Certificate Modal */}
       <Modal
         isOpen={openModal === "Check Certificate Validity"}
-        onClose={() => setOpenModal(null)}
+        onClose={handleCloseModal}
         title="Check Certificate Validity"
-        onVerify={() => alert("Verifying certificate...")}
+        onVerify={verifyCertificate}
+        isVerifying={isVerifying}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           <div>
             <label className="block text-sm font-semibold text-[#003366] mb-2">
               Passport Number
@@ -221,31 +346,55 @@ export const ExamResultSection = () => {
             <input
               type="text"
               placeholder="Enter Passport Number"
+              value={passportNumber}
+              onChange={(e) => setPassportNumber(e.target.value)}
               className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
+              disabled={isVerifying}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#003366] mb-2">
-              Certificate Serial Number
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Certificate Serial Number"
-              className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
-            />
-          </div>
+          {/* Verification Result */}
+          {verificationResult && (
+            <div className={`p-4 rounded-xl border-2 ${
+              verificationResult.success 
+                ? "bg-green-50 border-green-200" 
+                : "bg-red-50 border-red-200"
+            }`}>
+              <div className="flex items-start gap-3">
+                {verificationResult.success ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                )}
+                <div>
+                  <p className={`font-medium ${
+                    verificationResult.success ? "text-green-800" : "text-red-800"
+                  }`}>
+                    {verificationResult.message}
+                  </p>
+                  {verificationResult.tokenNumber && (
+                    <div className="mt-2 p-3 bg-green-100 rounded-lg">
+                      <p className="text-green-800 font-semibold">
+                        Your Token Number: <span className="text-lg">{verificationResult.tokenNumber}</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
 
       {/* Labor Result Modal */}
       <Modal
         isOpen={openModal === "Check Labor Result"}
-        onClose={() => setOpenModal(null)}
+        onClose={handleCloseModal}
         title="Check Labor Result"
-        onVerify={() => alert("Verifying labor result...")}
+        onVerify={verifyLaborResult}
+        isVerifying={isVerifying}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           <div>
             <label className="block text-sm font-semibold text-[#003366] mb-2">
               Passport Number
@@ -253,18 +402,10 @@ export const ExamResultSection = () => {
             <input
               type="text"
               placeholder="Enter Passport Number"
+              value={passportNumber}
+              onChange={(e) => setPassportNumber(e.target.value)}
               className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-[#003366] mb-2">
-              Occupation Key
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Occupation Key"
-              className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
+              disabled={isVerifying}
             />
           </div>
 
@@ -275,9 +416,43 @@ export const ExamResultSection = () => {
             <input
               type="text"
               placeholder="Enter Nationality Code"
+              value={nationalityCode}
+              onChange={(e) => setNationalityCode(e.target.value)}
               className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
+              disabled={isVerifying}
             />
           </div>
+
+          {/* Verification Result */}
+          {verificationResult && (
+            <div className={`p-4 rounded-xl border-2 ${
+              verificationResult.success 
+                ? "bg-green-50 border-green-200" 
+                : "bg-red-50 border-red-200"
+            }`}>
+              <div className="flex items-start gap-3">
+                {verificationResult.success ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                )}
+                <div>
+                  <p className={`font-medium ${
+                    verificationResult.success ? "text-green-800" : "text-red-800"
+                  }`}>
+                    {verificationResult.message}
+                  </p>
+                  {verificationResult.tokenNumber && (
+                    <div className="mt-2 p-3 bg-green-100 rounded-lg">
+                      <p className="text-green-800 font-semibold">
+                        Your Token Number: <span className="text-lg">{verificationResult.tokenNumber}</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
     </section>

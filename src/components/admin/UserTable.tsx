@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Eye, Edit, Trash2, User, Mail, Phone, MapPin, Calendar } from "lucide-react";
+import { Eye, Edit, Trash2, User, Mail, Phone, MapPin, Hash } from "lucide-react";
 import { User as UserType } from "@/lib/types/user";
 
 interface UserTableProps {
@@ -13,14 +13,6 @@ interface UserTableProps {
 }
 
 export function UserTable({ users, isLoading, onViewUser, onEditUser, onDeleteUser }: UserTableProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
   if (isLoading) {
     return (
       <div className="p-8 text-center">
@@ -58,7 +50,7 @@ export function UserTable({ users, isLoading, onViewUser, onEditUser, onDeleteUs
               Status
             </th>
             <th className="text-left py-4 px-6 text-sm font-semibold text-[#64748B] uppercase tracking-wider">
-              Joined
+              Token Number
             </th>
             <th className="text-left py-4 px-6 text-sm font-semibold text-[#64748B] uppercase tracking-wider">
               Actions
@@ -135,9 +127,15 @@ export function UserTable({ users, isLoading, onViewUser, onEditUser, onDeleteUs
               </td>
               
               <td className="py-4 px-6">
-                <div className="flex items-center text-sm text-[#64748B]">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {formatDate(user.created_at)}
+                <div className="flex items-center">
+                  <Hash className="h-4 w-4 text-[#64748B] mr-2" />
+                  <span className={`text-sm font-medium ${
+                    user.passport?.token_number 
+                      ? 'text-[#003366] bg-blue-50 px-2 py-1 rounded' 
+                      : 'text-[#64748B] italic'
+                  }`}>
+                    {user.passport?.token_number || "Not Assigned"}
+                  </span>
                 </div>
               </td>
               

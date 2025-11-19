@@ -122,36 +122,45 @@ export default function AdminDashboard() {
   };
 
   const handleUpdateUser = async (updatedUserData: EditableUser) => {
-    try {
-      console.log('🔄 Updating user:', updatedUserData.id, updatedUserData);
-      
-      const response = await fetch(`http://localhost:5000/api/users/${updatedUserData.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedUserData)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        console.log('✅ User updated successfully');
-        // Update the local state with the returned user data
-        setUsers(users.map(user => 
-          user.id === updatedUserData.id ? { ...user, ...updatedUserData } : user
-        ));
-        setEditingUser(null);
-        alert('User updated successfully');
-      } else {
-        console.error('❌ Failed to update user:', result.message);
-        alert(result.message || 'Failed to update user');
+  try {
+    console.log('🔄 Original update data:', updatedUserData);
+    
+    // Ensure correct payload structure
+    const payload = {
+      ...updatedUserData,
+      passport: {
+        token_number: updatedUserData.passport?.token_number || ""
       }
-    } catch (error) {
-      console.error('❌ Error updating user:', error);
-      alert('Error updating user. Please try again.');
+    };
+    
+    console.log('📤 Final payload being sent:', payload);
+    
+    const response = await fetch(`http://localhost:5000/api/users/${updatedUserData.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    console.log('✅ Backend response:', result);
+
+    if (result.success) {
+      console.log('✅ User updated successfully');
+      // Refresh the data
+      fetchUsers();
+      setEditingUser(null);
+      alert('User updated successfully');
+    } else {
+      console.error('❌ Failed to update user:', result.message);
+      alert(result.message || 'Failed to update user');
     }
-  };
+  } catch (error) {
+    console.error('❌ Error updating user:', error);
+    alert('Error updating user. Please try again.');
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-6">

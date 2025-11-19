@@ -10,7 +10,7 @@ const SimpleModal = ({ isOpen, onClose, title, onVerify, children }: any) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center mt-50 p-4 bg-black/50 backdrop-blur-sm">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -201,7 +201,7 @@ export default function Header() {
         title="Certificate Verification"
         onVerify={() => alert("Verifying certificate...")}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col  gap-4">
           <div>
             <label className="block text-sm font-semibold text-[#003366] mb-2">
               Passport Number
@@ -213,16 +213,6 @@ export default function Header() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#003366] mb-2">
-              Certificate Serial Number
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Certificate Serial Number"
-              className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
-            />
-          </div>
         </div>
       </SimpleModal>
 
@@ -245,27 +235,6 @@ export default function Header() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#003366] mb-2">
-              Occupation Key
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Occupation Key"
-              className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-[#003366] mb-2">
-              Nationality Code
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Nationality Code"
-              className="w-full border-2 border-[#E2E8F0] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
-            />
-          </div>
         </div>
       </SimpleModal>
     </header>

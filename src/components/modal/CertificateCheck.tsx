@@ -8,10 +8,18 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  onVerify?: () => void;
+  onVerify: () => void;
+  isVerifying?: boolean;
 }
 
-export const Modal = ({ isOpen, onClose, title, children, onVerify }: ModalProps) => {
+export const Modal: React.FC<ModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  title, 
+  children, 
+  onVerify, 
+  isVerifying = false 
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -75,12 +83,19 @@ export const Modal = ({ isOpen, onClose, title, children, onVerify }: ModalProps
                   Cancel
                 </button>
                 <button
-                  onClick={onVerify}
-                  className="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-[#003366] to-[#004D99] text-white font-semibold hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
-                >
-                  <Shield className="w-4 h-4" />
-                  Verify Now
-                </button>
+    onClick={onVerify}
+    disabled={isVerifying}
+    className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    {isVerifying ? (
+      <div className="flex items-center gap-2">
+        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+        Verifying...
+      </div>
+    ) : (
+      'Verify'
+    )}
+  </button>
               </div>
             </div>
 
