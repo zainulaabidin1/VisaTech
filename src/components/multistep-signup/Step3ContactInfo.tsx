@@ -11,13 +11,15 @@ type StepProps = {
   onPrev?: () => void;
   onClose?: () => void;
   isLast?: boolean;
+  form?: any; // Add this line
+  setForm?: React.Dispatch<React.SetStateAction<any>>; // Add this line
 };
 
-export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
+export function Step3ContactInfo({ onNext, onPrev, form, setForm }: StepProps) {
   const [formData, setFormData] = useState({
-    email: "",
+    email: form?.email || "", // Initialize with parent form data
     countryCode: "+92",
-    phone: "",
+    phone: form?.phone || "", // Initialize with parent form data
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -52,6 +54,20 @@ export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
         phone: formData.phone,
         countryCode: formData.countryCode
       };
+
+      // 🔥 UPDATE PARENT FORM STATE WITH EMAIL AND PHONE
+      if (setForm) {
+        setForm((prev: any) => ({
+          ...prev,
+          email: formData.email,
+          phone: formData.phone
+        }));
+        console.log('✅ Updated parent form state with email:', formData.email);
+      }
+
+      // Store email in localStorage as backup
+      localStorage.setItem('userEmail', formData.email);
+      console.log('📧 Email stored for verification:', formData.email);
 
       // API call to save contact info and send OTP
       const response = await fetch('http://localhost:5000/api/users/contact-info', {
@@ -89,7 +105,17 @@ export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
     }
   };
 
-  // Format phone number as user types
+  // Update parent form when inputs change (optional but good for real-time updates)
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setFormData((d) => ({ ...d, email: newEmail }));
+    
+    // Update parent form in real-time
+    if (setForm) {
+      setForm((prev: any) => ({ ...prev, email: newEmail }));
+    }
+  };
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, '');
     let formattedValue = '';
@@ -105,6 +131,11 @@ export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
     }
     
     setFormData((d) => ({ ...d, phone: formattedValue }));
+    
+    // Update parent form in real-time
+    if (setForm) {
+      setForm((prev: any) => ({ ...prev, phone: rawValue })); // Store raw phone number without formatting
+    }
   };
 
   return (
@@ -136,9 +167,7 @@ export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
               type="email"
               placeholder="Enter your email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData((d) => ({ ...d, email: e.target.value }))
-              }
+              onChange={handleEmailChange} // Use the updated handler
               className="border-[#00A5E5]/40 text-black focus:ring-[#00A5E5]"
             />
             {errors.email && (
@@ -219,6 +248,16 @@ export function Step3ContactInfo({ onNext, onPrev }: StepProps) {
           {isLoading ? "Sending OTP..." : otpSent ? "OTP Sent ✓" : "Send OTP & Continue →"}
         </Button>
       </div>
+
+      {/* Debug Info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="text-xs text-gray-500 mt-4 p-2 bg-gray-100 rounded">
+          <p><strong>Debug Info:</strong></p>
+          <p>• Local email state: {formData.email}</p>
+          <p>• Parent form email: {form?.email || 'Not set'}</p>
+          <p>• Has setForm function: {setForm ? 'Yes' : 'No'}</p>
+        </div>
+      )}
 
       <p className="text-center text-sm text-[#005B9E]/70">
         Already have an account?{" "}

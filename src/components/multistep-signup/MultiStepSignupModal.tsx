@@ -63,6 +63,8 @@ export function MultiStepSignupModal({
   };
 
   const prev = () => setStep((s) => Math.max(s - 1, 1));
+  
+  // Get the current step component
   const CurrentStep = steps[step - 1]?.component;
 
   return (
@@ -163,14 +165,25 @@ export function MultiStepSignupModal({
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <CurrentStep
-                      onNext={next}
-                      onPrev={prev}
-                      onClose={onClose}
-                      isLast={step === steps.length}
-                      form={form}
-                      setForm={setForm}
-                    />
+                    {/* Render Step4 with email prop, other steps normally */}
+                    {step === 4 ? (
+                      <Step4EmailVerification
+                        onNext={next}
+                        onPrev={prev}
+                        onClose={onClose}
+                        isLast={step === steps.length}
+                        email={form.email} // 🔥 PASS THE EMAIL PROP HERE
+                      />
+                    ) : (
+                      <CurrentStep
+                        onNext={next}
+                        onPrev={prev}
+                        onClose={onClose}
+                        isLast={step === steps.length}
+                        form={form}
+                        setForm={setForm}
+                      />
+                    )}
                   </motion.div>
                 ) : (
                   <motion.div

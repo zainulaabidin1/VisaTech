@@ -15,25 +15,33 @@ type StepProps = {
 
 export function Step4EmailVerification({ onNext, onPrev, email }: StepProps) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(180);
   const [error, setError] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [canResend, setCanResend] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
 
-  // Store the actual OTP that was sent (in real app, this comes from backend)
-  const [actualOTP, setActualOTP] = useState("");
-
-  // Generate or fetch OTP when component mounts
+  // Debug: Check what email we're receiving
   useEffect(() => {
-    // In real app, this would be an API call to send OTP
-    const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-    setActualOTP(generatedOTP);
-    console.log("OTP sent to user:", generatedOTP); // Remove in production
+    console.log("🔍 Step4 Debug - Email prop:", email);
+    console.log("🔍 Step4 Debug - localStorage email:", localStorage.getItem('userEmail'));
     
-    // Simulate sending email
-    sendVerificationEmail(generatedOTP);
-  }, []);
+    if (email) {
+      setUserEmail(email);
+      console.log("✅ Using email from props:", email);
+    } else {
+      // Try to get email from localStorage
+      const storedEmail = localStorage.getItem('userEmail');
+      if (storedEmail) {
+        setUserEmail(storedEmail);
+        console.log("✅ Using email from localStorage:", storedEmail);
+      } else {
+        console.error("❌ No email found in props or localStorage");
+        setError("Email not found. Please go back and try again.");
+      }
+    }
+  }, [email]);
 
   useEffect(() => {
     if (timeLeft > 0) {
@@ -51,80 +59,112 @@ export function Step4EmailVerification({ onNext, onPrev, email }: StepProps) {
       setCode(newCode);
       setError("");
 
-      // Auto-focus next input
       if (value !== "" && index < 5) {
         const nextInput = document.getElementById(`code-${index + 1}`);
         if (nextInput) nextInput.focus();
       }
+
+      if (newCode.every(digit => digit !== "") && index === 5) {
+        handleSubmit(newCode.join(""));
+      }
     }
   };
 
-  const sendVerificationEmail = async (otp: string) => {
-    try {
-      // Replace this with your actual email sending API call
-      const response = await fetch('/api/send-verification-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp })
-      });
-      
-      if (!response.ok) throw new Error('Failed to send email');
-      console.log('Verification email sent successfully');
-    } catch (error) {
-      console.error('Error sending email:', error);
-      setError('Failed to send verification email. Please try again.');
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && code[index] === "" && index > 0) {
+      const prevInput = document.getElementById(`code-${index - 1}`);
+      if (prevInput) prevInput.focus();
     }
   };
 
   const handleResendCode = async () => {
-    if (!canResend) return;
+    if (!canResend || !userEmail) {
+      console.log("❌ Cannot resend - conditions:", { canResend, userEmail });
+      return;
+    }
     
     setIsLoading(true);
-    const newOTP = Math.floor(100000 + Math.random() * 900000).toString();
-    setActualOTP(newOTP);
-    console.log("New OTP:", newOTP); // Remove in production
-    
-    await sendVerificationEmail(newOTP);
-    
-    setTimeLeft(30);
-    setCanResend(false);
-    setCode(["", "", "", "", "", ""]);
     setError("");
-    setIsLoading(false);
-    
-    // Focus first input
-    const firstInput = document.getElementById('code-0');
-    if (firstInput) firstInput.focus();
+
+    try {
+      console.log("📨 Attempting to resend OTP to:", userEmail);
+      
+      const response = await fetch('http://localhost:5000/api/auth/resend-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userEmail })
+      });
+
+      console.log("📨 Resend response status:", response.status);
+      
+      const result = await response.json();
+      console.log("📨 Resend response data:", result);
+
+      if (result.success) {
+        console.log('✅ New OTP sent successfully');
+        setTimeLeft(180);
+        setCanResend(false);
+        setCode(["", "", "", "", "", ""]);
+        setError("");
+        
+        const firstInput = document.getElementById('code-0');
+        if (firstInput) firstInput.focus();
+      } else {
+        setError(result.message || 'Failed to resend verification code');
+      }
+    } catch (error) {
+      console.error('Resend OTP error:', error);
+      setError('Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const verifyCode = async (enteredCode: string) => {
-    // Replace this with your actual API verification call
+    if (!userEmail) {
+      console.log("❌ No email available for verification");
+      setError('Email not found. Please go back and try again.');
+      return false;
+    }
+
     try {
-      const response = await fetch('/api/verify-email-code', {
+      console.log("🔐 Attempting to verify code:", { email: userEmail, code: enteredCode });
+      
+      const response = await fetch('http://localhost:5000/api/auth/verify-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code: enteredCode })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: userEmail, 
+          verification_code: enteredCode 
+        })
       });
 
-      const data = await response.json();
+      console.log("🔐 Verification response status:", response.status);
       
-      if (data.success) {
+      const result = await response.json();
+      console.log("🔐 Verification response data:", result);
+      
+      if (result.success) {
         return true;
       } else {
-        setError(data.message || 'Invalid verification code');
+        setError(result.message || 'Invalid verification code');
         return false;
       }
     } catch (error) {
+      console.error('Verification error:', error);
       setError('Verification failed. Please try again.');
       return false;
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const enteredCode = code.join("");
+  const handleSubmit = async (enteredCode?: string) => {
+    const finalCode = enteredCode || code.join("");
     
-    if (enteredCode.length < 6) {
+    if (finalCode.length < 6) {
       setError("Please enter the complete verification code.");
       return;
     }
@@ -132,20 +172,26 @@ export function Step4EmailVerification({ onNext, onPrev, email }: StepProps) {
     setIsLoading(true);
     setError("");
 
-    // For demo purposes - compare with generated OTP
-    // In production, use the verifyCode function above
-    if (enteredCode === actualOTP) {
+    console.log("🔄 Starting verification process...");
+    
+    const isValid = await verifyCode(finalCode);
+    
+    if (isValid) {
       setIsVerified(true);
       setTimeout(() => onNext?.(), 1000);
-    } else {
-      setError("Invalid verification code. Please try again.");
     }
     
     setIsLoading(false);
   };
 
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 text-center">
+    <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-8 text-center">
       <motion.h2
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -156,8 +202,18 @@ export function Step4EmailVerification({ onNext, onPrev, email }: StepProps) {
 
       <p className="text-[#005B9E]/80 text-sm">
         We just sent your verification code to{" "}
-        <span className="font-semibold text-[#005B9E]">{email || "your email"}</span>
+        <span className="font-semibold text-[#005B9E]">
+          {userEmail || "your email"}
+        </span>
       </p>
+
+      {!userEmail && (
+        <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+          <p className="text-yellow-800 text-sm">
+            ⚠️ <strong>Email not found.</strong> Please go back to Step 3 and enter your email again.
+          </p>
+        </div>
+      )}
 
       <p className="text-[#00A5E5] text-sm">
         Please enter it below or{" "}
@@ -177,48 +233,91 @@ export function Step4EmailVerification({ onNext, onPrev, email }: StepProps) {
             key={i}
             id={`code-${i}`}
             type="text"
+            inputMode="numeric"
             value={digit}
             maxLength={1}
             onChange={(e) => handleChange(i, e.target.value)}
-            className="w-12 h-12 text-center text-lg border-[#00A5E5]/50 focus:ring-[#00A5E5] rounded-md"
-            disabled={isLoading || isVerified}
+            onKeyDown={(e) => handleKeyDown(i, e)}
+            className="w-12 h-12 text-center text-lg font-semibold border-[#00A5E5]/50 focus:ring-[#00A5E5] rounded-md"
+            disabled={isLoading || isVerified || !userEmail}
+            autoFocus={i === 0 && !!userEmail}
           />
         ))}
       </div>
 
       {/* Timer and Resend */}
-      <p className="text-[#005B9E]/70 mt-3 text-sm font-medium">
+      <div className="text-[#005B9E]/70 mt-3 text-sm font-medium">
         {timeLeft > 0 ? (
-          `00:${timeLeft.toString().padStart(2, "0")}`
+          <div>
+            Code expires in: <span className="text-[#F59E0B]">{formatTime(timeLeft)}</span>
+          </div>
         ) : (
           <button
             type="button"
             onClick={handleResendCode}
-            disabled={isLoading}
-            className="text-[#00A5E5] hover:text-[#005B9E] underline"
+            disabled={isLoading || !userEmail}
+            className="text-[#00A5E5] hover:text-[#005B9E] underline disabled:opacity-50"
           >
-            Resend Code
+            {isLoading ? "Sending..." : "Resend Code"}
           </button>
         )}
-      </p>
+      </div>
 
       {/* Error Message */}
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && (
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-red-500 text-sm bg-red-50 p-2 rounded-lg"
+        >
+          {error}
+        </motion.p>
+      )}
+
+      {/* Success Message */}
+      {isVerified && (
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-green-600 text-sm bg-green-50 p-2 rounded-lg"
+        >
+          ✅ Email verified successfully! Redirecting...
+        </motion.p>
+      )}
 
       {/* Continue Button */}
       <div className="pt-4">
         <Button
           type="submit"
-          disabled={isVerified || isLoading}
-          className="w-full bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E] hover:from-[#FFD84A] hover:to-[#F9C400]"
+          disabled={isVerified || isLoading || code.join("").length < 6 || !userEmail}
+          className="w-full bg-gradient-to-r from-[#F9C400] to-[#FFD84A] text-[#005B9E] hover:from-[#FFD84A] hover:to-[#F9C400] disabled:opacity-50"
         >
-          {isLoading ? "Verifying..." : isVerified ? "Verified ✓" : "Continue"}
+          {isLoading ? "Verifying..." : isVerified ? "Verified ✓" : "Verify Email"}
         </Button>
       </div>
 
-      {/* For testing - remove in production */}
-      <div className="text-xs text-gray-500 mt-2">
-        Debug: OTP is {actualOTP} (remove in production)
+      {/* Enhanced Debug info */}
+      <div className="text-xs text-gray-500 mt-4 p-2 bg-gray-100 rounded">
+        <p><strong>Debug Information:</strong></p>
+        <p>• Email from props: {email || "undefined"}</p>
+        <p>• Email being used: {userEmail || "undefined"}</p>
+        <p>• Code entered: {code.join('')}</p>
+        <p>• API endpoints:</p>
+        <p>  - Verify: http://localhost:5000/api/auth/verify-email</p>
+        <p>  - Resend: http://localhost:5000/api/auth/resend-otp</p>
+        <button
+          type="button"
+          onClick={() => {
+            console.log("🔍 Manual Debug Check:");
+            console.log("Email prop:", email);
+            console.log("UserEmail state:", userEmail);
+            console.log("LocalStorage email:", localStorage.getItem('userEmail'));
+            console.log("Code array:", code);
+          }}
+          className="mt-2 px-3 py-1 bg-blue-500 text-white rounded text-xs"
+        >
+          Check Console for Debug Info
+        </button>
       </div>
     </form>
   );
