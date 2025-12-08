@@ -89,15 +89,29 @@ export function Step1PassportInfo({ onNext, onPrev, form, setForm }: StepProps) 
           onClick={() => setShowInstructions(true)}
         >
           <div className="mt-6 flex justify-center">
-            {form.passportImage ? (
-              <img
-                src={form.passportImage}
-                alt="Passport Preview"
-                className="h-40 w-auto rounded-xl shadow-md border border-[#00A5E5]/40 object-cover transition-all duration-300 hover:scale-[1.02]"
-              />
-            ) : (
-              <Upload className="h-10 w-10 text-[#005B9E] mb-3 transition-transform duration-300 group-hover:scale-110" />
-            )}
+           {/* // In Step1PassportInfo.tsx, update the img tag: */}
+{form.passportImage ? (
+  <img
+    src={
+      // Check if it's already a full URL
+      form.passportImage.startsWith('http://') || form.passportImage.startsWith('https://') 
+        ? form.passportImage 
+        // If it's a path starting with /uploads, prepend backend URL
+        : form.passportImage.startsWith('/uploads/')
+          ? `http://localhost:5000${form.passportImage}`
+          // For blob URLs or data URLs, use as-is
+          : form.passportImage
+    }
+    alt="Passport Preview"
+    className="h-40 w-auto rounded-xl shadow-md border border-[#00A5E5]/40 object-cover transition-all duration-300 hover:scale-[1.02]"
+    onError={(e) => {
+      console.error('Failed to load image:', e.currentTarget.src);
+      // Optional: show fallback
+    }}
+  />
+) : (
+  <Upload className="h-10 w-10 text-[#005B9E] mb-3 transition-transform duration-300 group-hover:scale-110" />
+)}
           </div>
 
           <span className="text-[#005B9E] font-semibold text-lg tracking-wide">

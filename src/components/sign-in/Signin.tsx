@@ -1,11 +1,65 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+
+// Token management utilities
+export const setAuthToken = (token: string) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('authTokenTimestamp', Date.now().toString());
+  }
+};
+
+export const getAuthToken = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('authToken');
+  }
+  return null;
+};
+
+export const clearAuthToken = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authTokenTimestamp');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('user');
+  }
+};
+
+export const setUserData = (user: any) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('user', JSON.stringify(user));
+  }
+};
+
+export const getUserData = () => {
+  if (typeof window !== 'undefined') {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  }
+  return null;
+};
+
+// Check if token is expired
+export const isTokenExpired = (): boolean => {
+  if (typeof window === 'undefined') return true;
+  
+  const timestampStr = localStorage.getItem('authTokenTimestamp');
+  if (!timestampStr) return true;
+  
+  const timestamp = parseInt(timestampStr);
+  const now = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+  
+  return (now - timestamp) > oneWeek;
+};
 
 export default function SignIn() {
   const [method, setMethod] = useState<"email" | "phone">("email");
@@ -14,6 +68,39 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = getAuthToken();
+      
+      if (!token || isTokenExpired()) {
+        clearAuthToken();
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/verify-token', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          router.push('/dashboard');
+        } else {
+          clearAuthToken();
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        clearAuthToken();
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,12 +134,17 @@ export default function SignIn() {
     if (!validateForm()) return;
     
     setIsLoading(true);
+    setErrors({});
 
     try {
       const loginData = {
-        [method === "email" ? "email" : "phone"]: method === "email" ? form.email : form.phone,
+        [method === "email" ? "email" : "phone"]: method === "email" 
+          ? form.email.trim().toLowerCase() 
+          : form.phone.replace(/\D/g, ''),
         password: form.password
       };
+
+      console.log('📤 Sending login request:', loginData);
 
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -63,31 +155,45 @@ export default function SignIn() {
       });
 
       const result = await response.json();
+      console.log('📥 Login response:', result);
 
       if (result.success) {
-        console.log('✅ Login successful:', result.data);
+        // Save token and user data
+        setAuthToken(result.data.token);
+        setUserData(result.data.user);
         
-        // Store token in localStorage or context
-        localStorage.setItem('authToken', result.data.token);
-        localStorage.setItem('user', JSON.stringify(result.data.user));
+        // Show success message (you can use a toast library)
+        console.log('✅ Login successful!');
         
-        // Redirect to dashboard or home page
-        alert('Login successful!');
-        router.push('/dashboard'); // Change this to your desired route
+        // Redirect to dashboard
+        router.push('/dashboard');
         
       } else {
-        setErrors({ general: result.message || 'Login failed' });
+        // Handle specific error cases
+        let errorMessage = result.message || 'Login failed';
+        
+        if (errorMessage.includes('verify')) {
+          setErrors({ 
+            general: `${errorMessage}. Please check your email.` 
+          });
+        } else if (errorMessage.includes('inactive')) {
+          setErrors({ 
+            general: 'Your account is deactivated. Please contact support.' 
+          });
+        } else {
+          setErrors({ general: errorMessage });
+        }
+        
         console.error('Login error:', result);
       }
     } catch (error) {
       console.error('Network error:', error);
-      setErrors({ general: 'Network error. Please try again.' });
+      setErrors({ general: 'Network error. Please check your connection.' });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Format phone number as user types
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, '');
     let formattedValue = '';
@@ -96,13 +202,36 @@ export default function SignIn() {
       if (rawValue.length <= 3) {
         formattedValue = rawValue;
       } else if (rawValue.length <= 6) {
-        formattedValue = `${rawValue.slice(0, 3)} - ${rawValue.slice(3)}`;
+        formattedValue = `${rawValue.slice(0, 3)}-${rawValue.slice(3)}`;
       } else {
-        formattedValue = `${rawValue.slice(0, 3)} - ${rawValue.slice(3, 6)} - ${rawValue.slice(6, 10)}`;
+        formattedValue = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 6)}-${rawValue.slice(6, 10)}`;
       }
     }
     
-    setForm((d) => ({ ...d, phone: formattedValue }));
+    setForm(prev => ({ ...prev, phone: formattedValue }));
+    if (errors.phone) {
+      setErrors(prev => ({ ...prev, phone: "" }));
+    }
+  };
+
+  const switchMethod = (newMethod: "email" | "phone") => {
+    setMethod(newMethod);
+    // Clear related form fields and errors
+    if (newMethod === "email") {
+      setForm(prev => ({ ...prev, phone: "" }));
+      setErrors(prev => ({ ...prev, phone: "" }));
+    } else {
+      setForm(prev => ({ ...prev, email: "" }));
+      setErrors(prev => ({ ...prev, email: "" }));
+    }
+  };
+
+  const handleForgotPassword = () => {
+    if (method === "email" && form.email) {
+      router.push(`/forgot-password?email=${encodeURIComponent(form.email)}`);
+    } else {
+      router.push('/forgot-password');
+    }
   };
 
   return (
@@ -126,7 +255,7 @@ export default function SignIn() {
           <button
             key={option}
             type="button"
-            onClick={() => setMethod(option as "email" | "phone")}
+            onClick={() => switchMethod(option as "email" | "phone")}
             className={`flex-1 py-2.5 rounded-xl cursor-pointer font-medium transition-all duration-300 ${
               method === option
                 ? "bg-gradient-to-r from-[#005B9E] to-[#00A5E5] text-white shadow-md"
@@ -141,7 +270,10 @@ export default function SignIn() {
       {/* General Error Message */}
       {errors.general && (
         <div className="rounded-lg bg-red-50 border border-red-200 p-3 mb-4">
-          <p className="text-red-800 text-sm font-medium">{errors.general}</p>
+          <p className="text-red-800 text-sm font-medium flex items-center">
+            <span className="mr-2">⚠️</span>
+            {errors.general}
+          </p>
         </div>
       )}
 
@@ -196,11 +328,11 @@ export default function SignIn() {
               <input
                 name="phone"
                 type="text"
-                placeholder="300 - 123 - 4567"
+                placeholder="300-123-4567"
                 value={form.phone}
                 onChange={handlePhoneChange}
                 className="flex-1 text-black py-2 px-3 text-sm outline-none h-11"
-                maxLength={16}
+                maxLength={14}
               />
             </div>
             {errors.phone && (
@@ -258,6 +390,7 @@ export default function SignIn() {
           </label>
           <button
             type="button"
+            onClick={handleForgotPassword}
             className="text-[#00A5E5] cursor-pointer font-medium hover:underline hover:text-[#008ac5] transition-all"
           >
             Forgot password?

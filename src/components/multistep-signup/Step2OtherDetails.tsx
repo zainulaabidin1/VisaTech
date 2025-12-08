@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Upload, CheckCircle2, Shield, GraduationCap, Lock } from "lucide-react";
+import { Upload, CheckCircle2, Shield, GraduationCap, Lock, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 type StepProps = {
@@ -15,7 +15,7 @@ type StepProps = {
 
 export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
   const [formData, setFormData] = useState({
-    personalPhoto: null as File | null,
+    personalPhotoPath: "", // Store server file path
     nationalId: "",
     education: "",
     experience: "",
@@ -28,6 +28,97 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [preview, setPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Upload photo to server
+  const uploadPhotoToServer = async (file: File) => {
+    setIsUploading(true);
+    setUploadStatus("Uploading...");
+    setErrors(prev => ({ ...prev, personalPhoto: "" }));
+    
+    try {
+      const formData = new FormData();
+      formData.append('personalPhoto', file);
+
+      console.log('📤 Uploading personal photo:', file.name);
+
+      const response = await fetch('http://localhost:5000/api/users/upload-photo', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      console.log('📥 Upload response:', result);
+
+      if (result.success) {
+        // Save the server file path
+        setFormData(prev => ({
+          ...prev,
+          personalPhotoPath: result.data.filePath
+        }));
+        
+        // Update preview with server URL
+        setPreview(result.data.fileUrl);
+        setUploadStatus("✓ Photo uploaded successfully");
+        
+        return {
+          success: true,
+          filePath: result.data.filePath,
+          fileUrl: result.data.fileUrl
+        };
+      } else {
+        const errorMsg = result.message || 'Upload failed';
+        setErrors(prev => ({ ...prev, personalPhoto: errorMsg }));
+        setUploadStatus(`❌ ${errorMsg}`);
+        return { success: false };
+      }
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      const errorMsg = 'Network error. Please check if backend is running';
+      setErrors(prev => ({ ...prev, personalPhoto: errorMsg }));
+      setUploadStatus(`❌ ${errorMsg}`);
+      return { success: false };
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Handle file selection
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      setErrors(prev => ({ ...prev, personalPhoto: "Only JPG or PNG files are allowed" }));
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, personalPhoto: "File size must be less than 2MB" }));
+      return;
+    }
+
+    // Clear previous errors
+    setErrors(prev => ({ ...prev, personalPhoto: '' }));
+    setUploadStatus("");
+
+    // Create temporary preview
+    const tempPreview = URL.createObjectURL(file);
+    setPreview(tempPreview);
+
+    // Upload to server
+    const uploadResult = await uploadPhotoToServer(file);
+    
+    if (!uploadResult.success) {
+      // Clear preview if upload failed
+      setPreview(null);
+      URL.revokeObjectURL(tempPreview); // Clean up blob URL
+    }
+  };
 
   const validate = () => {
     const newErrors: any = {};
@@ -44,14 +135,8 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
       if (!(formData as any)[key]) newErrors[key] = "This field is required";
     }
 
-    if (!formData.personalPhoto)
-      newErrors.personalPhoto = "Personal photo is required";
-    else {
-      const file = formData.personalPhoto;
-      if (!["image/jpeg", "image/png"].includes(file.type))
-        newErrors.personalPhoto = "Only JPG or PNG allowed";
-      else if (file.size > 2 * 1024 * 1024)
-        newErrors.personalPhoto = "File must be ≤ 2 MB";
+    if (!formData.personalPhotoPath) {
+      newErrors.personalPhoto = "Personal photo is required. Please upload a photo.";
     }
 
     if (
@@ -81,20 +166,16 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
     setIsLoading(true);
 
     try {
-      // Convert file to base64 for storage
-      let personalPhotoBase64 = null;
-      if (formData.personalPhoto) {
-        personalPhotoBase64 = await fileToBase64(formData.personalPhoto);
-      }
-
       const formDataToSend = {
         nationalId: formData.nationalId,
         education: formData.education,
         experience: formData.experience,
         certification: formData.certification,
         password: formData.password,
-        personalPhoto: personalPhotoBase64
+        personalPhoto: formData.personalPhotoPath // Send server file path
       };
+
+      console.log('📤 Sending personal info:', formDataToSend);
 
       // API call to save personal info to database
       const response = await fetch('http://localhost:5000/api/users/personal-info', {
@@ -106,6 +187,7 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
       });
 
       const result = await response.json();
+      console.log('📥 Save response:', result);
 
       if (result.success) {
         console.log('✅ Personal info saved to database:', result.data);
@@ -122,16 +204,6 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
     }
   };
 
-  // Helper function to convert file to base64
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-7 bg-[#F8FAFC] p-6 rounded-2xl shadow-sm border border-[#E2E8F0]">
       {/* Upload Personal Photo */}
@@ -140,27 +212,43 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
           <Shield className="h-4 w-4 text-[#64748B]" />
           Upload Your Personal Photo<span className="text-[#DC2626]">*</span>
         </label>
-        <label className="cursor-pointer flex flex-col items-center justify-center w-full border-2 border-dashed border-[#94A3B8]/50 bg-[#FFFFFF] rounded-xl py-10 hover:bg-[#F1F5F9] transition relative mt-2">
-          <Input
+        
+        <div
+          className="cursor-pointer flex flex-col items-center justify-center w-full border-2 border-dashed border-[#94A3B8]/50 bg-[#FFFFFF] rounded-xl py-10 hover:bg-[#F1F5F9] transition relative mt-2"
+          onClick={() => !isUploading && fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
             type="file"
             className="hidden"
             accept=".png,.jpg,.jpeg"
-            onChange={(e) => {
-              const file = e.target.files?.[0] || null;
-              setFormData((d) => ({ ...d, personalPhoto: file }));
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = () => setPreview(reader.result as string);
-                reader.readAsDataURL(file);
-              } else setPreview(null);
-            }}
+            onChange={handleFileSelect}
+            disabled={isUploading}
           />
-          {preview ? (
-            <img
-              src={preview}
-              alt="preview"
-              className="max-h-32 rounded-lg shadow-sm border border-[#E2E8F0] object-cover"
-            />
+          
+          {isUploading ? (
+            <div className="flex flex-col items-center">
+              <Loader2 className="h-8 w-8 text-[#003366] mb-2 animate-spin" />
+              <span className="text-[#1E293B] font-medium">Uploading to server...</span>
+              <p className="text-xs text-[#64748B] mt-1">Please wait</p>
+            </div>
+          ) : preview ? (
+            <div className="flex flex-col items-center">
+              <img
+                src={preview}
+                alt="preview"
+                className="max-h-32 rounded-lg shadow-sm border border-[#E2E8F0] object-cover mb-2"
+                onError={(e) => {
+                  console.error('Preview image failed to load');
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle2 className="h-4 w-4" />
+                <span className="text-sm font-medium">Photo uploaded</span>
+              </div>
+              <p className="text-xs text-[#64748B] mt-1">Click to change photo</p>
+            </div>
           ) : (
             <>
               <Upload className="h-8 w-8 text-[#003366] mb-2 opacity-80" />
@@ -170,7 +258,21 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
               <p className="text-xs text-[#64748B] mt-1">JPG or PNG, max 2MB</p>
             </>
           )}
-        </label>
+        </div>
+        
+        {/* Upload Status Messages */}
+        {uploadStatus && (
+          <p className={`text-xs mt-1 ${uploadStatus.includes('✓') ? 'text-green-600' : 'text-[#DC2626]'}`}>
+            {uploadStatus}
+          </p>
+        )}
+        
+        {formData.personalPhotoPath && !errors.personalPhoto && !uploadStatus && (
+          <p className="text-xs text-green-600 mt-1">
+            ✓ Photo ready to save
+          </p>
+        )}
+        
         {errors.personalPhoto && (
           <p className="text-xs text-[#DC2626] mt-1">{errors.personalPhoto}</p>
         )}
@@ -299,14 +401,15 @@ export function Step2PersonalInfo({ onNext, onPrev }: StepProps) {
         <Button
           variant="outline"
           onClick={() => onPrev?.()}
-          className="border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition"
+          disabled={isLoading || isUploading}
+          className="border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition disabled:opacity-50"
         >
           ← Back
         </Button>
 
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || isUploading || !formData.personalPhotoPath}
           className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white font-semibold shadow-md hover:from-[#D97706] hover:to-[#B45309] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Saving..." : "Continue →"}
