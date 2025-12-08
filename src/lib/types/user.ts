@@ -12,7 +12,9 @@ export interface User {
   created_at: string;
   passport?: {
     token_number?: string;
+    passport_image_url?: string; 
   };
+  personal_photo_url?: string;
 }
 
 export interface Passport {
@@ -25,6 +27,7 @@ export interface Passport {
   token_number?: string; // Add this
   created_at: string;
   updated_at: string;
+   passport_image_url?: string; 
 }
 
 export interface EditableUser {

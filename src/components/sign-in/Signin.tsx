@@ -129,70 +129,73 @@ export default function SignIn() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
-    setErrors({});
+  e.preventDefault();
+  
+  if (!validateForm()) return;
+  
+  setIsLoading(true);
+  setErrors({});
 
-    try {
-      const loginData = {
-        [method === "email" ? "email" : "phone"]: method === "email" 
-          ? form.email.trim().toLowerCase() 
-          : form.phone.replace(/\D/g, ''),
-        password: form.password
-      };
+  try {
+    const loginData = {
+      [method === "email" ? "email" : "phone"]: method === "email" 
+        ? form.email.trim().toLowerCase() 
+        : form.phone.replace(/\D/g, ''),
+      password: form.password
+    };
 
-      console.log('📤 Sending login request:', loginData);
+    console.log('📤 Sending login request:', loginData);
 
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData)
-      });
+    const response = await fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(loginData)
+    });
 
-      const result = await response.json();
-      console.log('📥 Login response:', result);
+    const result = await response.json();
+    console.log('📥 Login response:', result);
 
-      if (result.success) {
-        // Save token and user data
-        setAuthToken(result.data.token);
-        setUserData(result.data.user);
-        
-        // Show success message (you can use a toast library)
-        console.log('✅ Login successful!');
-        
-        // Redirect to dashboard
-        router.push('/dashboard');
-        
+    if (result.success) {
+      // Save token and user data
+      setAuthToken(result.data.token);
+      setUserData(result.data.user);
+      
+      router.push('/dashboard');
+      
+    } else {
+      // Handle specific error cases
+      let errorMessage = result.message || 'Login failed';
+      
+      // Check if it's a passwordless user error
+      if (errorMessage.includes('no password') || errorMessage.includes('password not set')) {
+        setErrors({ 
+          general: 'Account has no password. Please use forgot password to set one.' 
+        });
+        // Optionally redirect to forgot password
+        // router.push(`/forgot-password?email=${encodeURIComponent(form.email)}`);
+      } else if (errorMessage.includes('verify')) {
+        setErrors({ 
+          general: `${errorMessage}. Please check your email.` 
+        });
+      } else if (errorMessage.includes('inactive')) {
+        setErrors({ 
+          general: 'Your account is deactivated. Please contact support.' 
+        });
       } else {
-        // Handle specific error cases
-        let errorMessage = result.message || 'Login failed';
-        
-        if (errorMessage.includes('verify')) {
-          setErrors({ 
-            general: `${errorMessage}. Please check your email.` 
-          });
-        } else if (errorMessage.includes('inactive')) {
-          setErrors({ 
-            general: 'Your account is deactivated. Please contact support.' 
-          });
-        } else {
-          setErrors({ general: errorMessage });
-        }
-        
-        console.error('Login error:', result);
+        setErrors({ general: errorMessage });
       }
-    } catch (error) {
-      console.error('Network error:', error);
-      setErrors({ general: 'Network error. Please check your connection.' });
-    } finally {
-      setIsLoading(false);
+      
+      console.error('Login error:', result);
     }
-  };
+  } catch (error) {
+    console.error('Network error:', error);
+    setErrors({ general: 'Network error. Please check your connection.' });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, '');
