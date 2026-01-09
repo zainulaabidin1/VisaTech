@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import Hero from "@/components/landing/hero"
-import FindCenter from "@/components/landing/FindCenter" // ✅ import FindCenter
+import FindCenter from "@/components/landing/FindCenter"
 import { FeatureCards } from "../components/landing/feature-cards"
 import { Stats } from "../components/landing/stats"
 import { Updates } from "../components/landing/updates"
@@ -14,6 +14,7 @@ import { useState, useEffect } from "react"
 import { MultiStepSignupModal } from "../components/multistep-signup/MultiStepSignupModal"
 import { ExamResultSection } from "@/components/landing/ExamResult"
 import Advantages from "@/components/landing/Advantages"
+import WhatsAppButton from "@/components/ui/whatsapp-button" // ✅ Add this import
 
 export default function Page() {
   const [openSignup, setOpenSignup] = useState(false)
@@ -42,7 +43,6 @@ export default function Page() {
         <Hero />
       </section>
      
-
       {/* === FindCenter Section below Hero === */}
       <section className="relative">
         <FindCenter /> 
@@ -55,23 +55,6 @@ export default function Page() {
       <section className="relative">
         <Advantages /> 
       </section>
-
-
-      {/* === Stats Section === */}
-      {/* <section className="relative overflow-hidden bg-gradient-to-tr from-blue-100 via-blue-50 to-white dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="container mx-auto px-4 py-20 md:py-28 text-center"
-        >
-          <h2 className="mb-10 text-3xl md:text-4xl font-semibold tracking-tight">
-            Proven Impact
-          </h2>
-          <Stats />
-        </motion.div>
-      </section> */}
-
 
       {/* === Partners Section === */}
       <div className="relative bg-gradient-to-b from-accent/20 via-background to-muted/30 py-20 md:py-28">
@@ -94,7 +77,8 @@ export default function Page() {
         </motion.div>
       </div>
 
-    
+      {/* === WhatsApp Support Button (Fixed Position) === */}
+      <WhatsAppButton />
 
       {/* === Footer === */}
       <Footer />

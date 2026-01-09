@@ -14,97 +14,53 @@ export function Step3ClarityInstruction({
 }) {
   return (
     <motion.div
-      className="text-[#005B9E] space-y-8 text-base bg-gradient-to-b from-[#f9fafc] to-[#eef6fb] p-8 rounded-2xl shadow-md"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      className="h-full w-full flex flex-col p-6 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
     >
-      {/* Header */}
-      <motion.h2
-        className="text-3xl font-bold text-[#005B9E] text-center mb-6 border-b pb-3 border-blue-200"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        Clarity & Visibility Instructions
-      </motion.h2>
-
-      {/* Instructions */}
-      <div className="space-y-5 max-w-2xl mx-auto">
-        <motion.div
-          className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-[#00A5E5]/20"
-          whileHover={{ scale: 1.02 }}
-        >
-          <Sparkles className="w-6 h-6 mt-1 text-[#00A5E5]" />
-          <p className="leading-relaxed">
-            Ensure there is <span className="font-semibold">no glare</span> or stain on the scan.  
-            The surface should appear clean, bright, and easy to read.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-[#F9C400]/30"
-          whileHover={{ scale: 1.02 }}
-        >
-          <Sun className="w-6 h-6 mt-1 text-[#F9C400]" />
-          <p className="leading-relaxed">
-            Avoid <span className="font-semibold">shadows</span> or dark areas over your document.  
-            Make sure every part of the image is evenly lit.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-[#005B9E]/10"
-          whileHover={{ scale: 1.02 }}
-        >
-          <Eye className="w-6 h-6 mt-1 text-[#005B9E]" />
-          <p className="leading-relaxed">
-            Capture your document in <span className="font-semibold">natural, indirect light</span>.  
-            Avoid flash or strong reflections for the best clarity.
-          </p>
-        </motion.div>
-
-        <p className="text-sm text-gray-600 text-center mt-3">
-          ⚠️ Photos taken under harsh light or shadows may cause glare,  
-          making important details unreadable. Take time to get a clean image.
-        </p>
+      <div className="flex-shrink-0 mb-4 text-center">
+        <h2 className="text-2xl font-bold text-[#005B9E]">Clarity & Lighting</h2>
       </div>
 
-      {/* Example Image */}
-      <motion.div
-        className="flex justify-center items-center mt-10"
-        whileHover={{ scale: 1.02 }}
-        transition={{ type: "spring", stiffness: 120 }}
-      >
-        <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all">
-          <Image
-            src="/step3passport.png"
-            alt="Clear passport example"
-            width={600}
-            height={320}
-            className="rounded-lg object-contain"
-          />
-          <p className="text-center text-sm text-gray-500 mt-3">
-            ✅ Example of a clear, glare-free passport scan
+      <div className="flex-1 flex flex-col md:flex-row items-center justify-center gap-6 min-h-0">
+        <div className="flex-1 max-w-md space-y-3 overflow-y-auto max-h-full pr-2">
+          <div className="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm border border-[#00A5E5]/20">
+            <Sparkles className="w-5 h-5 mt-1 text-[#00A5E5]" />
+            <p className="text-sm text-gray-700"><span className="font-semibold">No glare</span> or stains. Surface should be clean.</p>
+          </div>
+
+          <div className="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm border border-[#F9C400]/30">
+            <Sun className="w-5 h-5 mt-1 text-[#F9C400]" />
+            <p className="text-sm text-gray-700">Avoid <span className="font-semibold">shadows</span>. Ensure even lighting.</p>
+          </div>
+
+          <div className="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm border border-[#005B9E]/10">
+            <Eye className="w-5 h-5 mt-1 text-[#005B9E]" />
+            <p className="text-sm text-gray-700">Use <span className="font-semibold">natural light</span>. Avoid flash.</p>
+          </div>
+
+          <p className="text-xs text-red-500 italic mt-2">
+            ⚠️ Harsh light or shadows can hide details and cause rejection.
           </p>
         </div>
-      </motion.div>
 
-      {/* Buttons */}
-      <div className="flex justify-center gap-6 mt-10">
-        <Button
-          onClick={onPrev}
-          variant="outline"
-          className="text-[#005B9E] border-[#005B9E] hover:bg-[#e6f3fa] px-8 py-3 text-lg rounded-lg transition-transform hover:scale-[1.03] cursor-pointer"
-        >
-          Back
-        </Button>
+        <div className="flex-1 h-full max-h-[40vh] md:max-h-[60vh] flex flex-col items-center justify-center">
+          <div className="relative w-full h-full bg-white rounded-xl shadow-lg border border-gray-100 p-2">
+            <Image
+              src="/step3passport.png"
+              alt="Clear passport example"
+              fill
+              className="object-contain rounded-lg"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-2">✅ Clear, glare-free example</p>
+        </div>
+      </div>
 
-        <Button
-          onClick={onNext}
-          className="bg-[#005B9E] hover:bg-[#00487a] text-white px-8 py-3 text-lg rounded-lg shadow-md transition-transform hover:scale-[1.03] cursor-pointer"
-        >
-          Continue
-        </Button>
+      <div className="flex justify-center gap-4 mt-6 flex-shrink-0">
+        <Button onClick={onPrev} variant="outline" className="text-[#005B9E] border-[#005B9E] px-8 py-2.5 rounded-full">Back</Button>
+        <Button onClick={onNext} className="bg-[#005B9E] hover:bg-[#00487a] text-white px-8 py-2.5 rounded-full shadow-md">Continue</Button>
       </div>
     </motion.div>
   );

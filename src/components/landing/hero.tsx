@@ -44,8 +44,8 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-[#003366] to-[#004D99] text-transparent bg-clip-text drop-shadow-lg"
         >
-          Empower Your Future with{" "}
-          <span className="text-[#F59E0B]">Digital Excellence</span>
+          Elevating Careers {" "}
+          <span className="text-[#F59E0B]">Expanding Horizons</span>
         </motion.h1>
 
         <motion.p

@@ -45,20 +45,20 @@ export function PassportInstructionsModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[150] flex items-center justify-center bg-black/40 backdrop-blur-md p-4"
+          className="fixed inset-0 z-[150] bg-black/40 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 40 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 40 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="relative w-full max-w-4xl rounded-2xl bg-[#FFFFFF] shadow-2xl border border-[#E2E8F0] overflow-y-auto max-h-[90vh]"
+            className="w-full h-full bg-[#FFFFFF] flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#003366] to-[#004D99] rounded-t-2xl p-6 flex items-center justify-between text-white">
+            <div className="bg-gradient-to-r from-[#003366] to-[#004D99] p-6 flex items-center justify-between text-white flex-shrink-0">
               <h2 className="text-xl font-semibold tracking-wide">
                 Passport Upload Instructions
               </h2>
@@ -85,8 +85,8 @@ export function PassportInstructionsModal({
                         isActive
                           ? "bg-gradient-to-r from-[#003366] to-[#004D99] text-white border-transparent shadow-md"
                           : isCompleted
-                          ? "bg-gradient-to-r from-[#059669] to-[#047857] text-white border-transparent"
-                          : "border-[#94A3B8] text-[#64748B] bg-white"
+                            ? "bg-gradient-to-r from-[#059669] to-[#047857] text-white border-transparent"
+                            : "border-[#94A3B8] text-[#64748B] bg-white"
                       )}
                     >
                       <Icon className="h-5 w-5" />
@@ -97,8 +97,8 @@ export function PassportInstructionsModal({
                         isActive
                           ? "text-[#003366]"
                           : isCompleted
-                          ? "text-[#059669]"
-                          : "text-[#64748B]"
+                            ? "text-[#059669]"
+                            : "text-[#64748B]"
                       )}
                     >
                       {s.label}
@@ -112,14 +112,15 @@ export function PassportInstructionsModal({
             </div>
 
             {/* Step Content */}
-            <div className="p-8 bg-[#FFFFFF]">
+            <div className="flex-1 bg-[#FFFFFF] overflow-hidden relative">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={step}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
+                  className="h-full w-full"
                 >
                   <CurrentStep
                     onNext={next}

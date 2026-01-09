@@ -50,14 +50,14 @@ export const getUserData = () => {
 // Check if token is expired
 export const isTokenExpired = (): boolean => {
   if (typeof window === 'undefined') return true;
-  
+
   const timestampStr = localStorage.getItem('authTokenTimestamp');
   if (!timestampStr) return true;
-  
+
   const timestamp = parseInt(timestampStr);
   const now = Date.now();
   const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-  
+
   return (now - timestamp) > oneWeek;
 };
 
@@ -73,7 +73,7 @@ export default function SignIn() {
   useEffect(() => {
     const checkAuth = async () => {
       const token = getAuthToken();
-      
+
       if (!token || isTokenExpired()) {
         clearAuthToken();
         return;
@@ -89,7 +89,7 @@ export default function SignIn() {
         });
 
         if (response.ok) {
-          router.push('/dashboard');
+          //router.push('/dashboard');
         } else {
           clearAuthToken();
         }
@@ -129,78 +129,83 @@ export default function SignIn() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  
-  if (!validateForm()) return;
-  
-  setIsLoading(true);
-  setErrors({});
+    e.preventDefault();
 
-  try {
-    const loginData = {
-      [method === "email" ? "email" : "phone"]: method === "email" 
-        ? form.email.trim().toLowerCase() 
-        : form.phone.replace(/\D/g, ''),
-      password: form.password
-    };
+    if (!validateForm()) return;
 
-    console.log('📤 Sending login request:', loginData);
+    setIsLoading(true);
+    setErrors({});
 
-    const response = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(loginData)
-    });
+    try {
+      const loginData = {
+        [method === "email" ? "email" : "phone"]: method === "email"
+          ? form.email.trim().toLowerCase()
+          : form.phone.replace(/\D/g, ''),
+        password: form.password
+      };
 
-    const result = await response.json();
-    console.log('📥 Login response:', result);
+      console.log('📤 Sending login request:', loginData);
 
-    if (result.success) {
-      // Save token and user data
-      setAuthToken(result.data.token);
-      setUserData(result.data.user);
-      
-      router.push('/dashboard');
-      
-    } else {
-      // Handle specific error cases
-      let errorMessage = result.message || 'Login failed';
-      
-      // Check if it's a passwordless user error
-      if (errorMessage.includes('no password') || errorMessage.includes('password not set')) {
-        setErrors({ 
-          general: 'Account has no password. Please use forgot password to set one.' 
-        });
-        // Optionally redirect to forgot password
-        // router.push(`/forgot-password?email=${encodeURIComponent(form.email)}`);
-      } else if (errorMessage.includes('verify')) {
-        setErrors({ 
-          general: `${errorMessage}. Please check your email.` 
-        });
-      } else if (errorMessage.includes('inactive')) {
-        setErrors({ 
-          general: 'Your account is deactivated. Please contact support.' 
-        });
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData)
+      });
+
+      const result = await response.json();
+      console.log('📥 Login response:', result);
+
+      if (result.success) {
+        // Save token and user data
+        setAuthToken(result.data.token);
+        setUserData(result.data.user);
+
+        // Redirect based on role
+        if (result.data.user.role === 'admin') {
+          router.push('/admin');
+        } else {
+          router.push('/payment-status');
+        }
+
       } else {
-        setErrors({ general: errorMessage });
+        // Handle specific error cases
+        let errorMessage = result.message || 'Login failed';
+
+        // Check if it's a passwordless user error
+        if (errorMessage.includes('no password') || errorMessage.includes('password not set')) {
+          setErrors({
+            general: 'Account has no password. Please use forgot password to set one.'
+          });
+          // Optionally redirect to forgot password
+          // router.push(`/forgot-password?email=${encodeURIComponent(form.email)}`);
+        } else if (errorMessage.includes('verify')) {
+          setErrors({
+            general: `${errorMessage}. Please check your email.`
+          });
+        } else if (errorMessage.includes('inactive')) {
+          setErrors({
+            general: 'Your account is deactivated. Please contact support.'
+          });
+        } else {
+          setErrors({ general: errorMessage });
+        }
+
+        console.error('Login error:', result);
       }
-      
-      console.error('Login error:', result);
+    } catch (error) {
+      console.error('Network error:', error);
+      setErrors({ general: 'Network error. Please check your connection.' });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Network error:', error);
-    setErrors({ general: 'Network error. Please check your connection.' });
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, '');
     let formattedValue = '';
-    
+
     if (rawValue.length > 0) {
       if (rawValue.length <= 3) {
         formattedValue = rawValue;
@@ -210,7 +215,7 @@ export default function SignIn() {
         formattedValue = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 6)}-${rawValue.slice(6, 10)}`;
       }
     }
-    
+
     setForm(prev => ({ ...prev, phone: formattedValue }));
     if (errors.phone) {
       setErrors(prev => ({ ...prev, phone: "" }));
@@ -259,11 +264,10 @@ export default function SignIn() {
             key={option}
             type="button"
             onClick={() => switchMethod(option as "email" | "phone")}
-            className={`flex-1 py-2.5 rounded-xl cursor-pointer font-medium transition-all duration-300 ${
-              method === option
-                ? "bg-gradient-to-r from-[#005B9E] to-[#00A5E5] text-white shadow-md"
-                : "text-[#005B9E]/70 hover:text-[#005B9E]"
-            }`}
+            className={`flex-1 py-2.5 rounded-xl cursor-pointer font-medium transition-all duration-300 ${method === option
+              ? "bg-gradient-to-r from-[#005B9E] to-[#00A5E5] text-white shadow-md"
+              : "text-[#005B9E]/70 hover:text-[#005B9E]"
+              }`}
           >
             {option === "email" ? "Email" : "Phone Number"}
           </button>
@@ -298,9 +302,8 @@ export default function SignIn() {
               placeholder="Enter your email"
               value={form.email}
               onChange={handleChange}
-              className={`mt-1 h-11 border-gray-200 text-black focus:border-[#00A5E5] focus:ring-[#00A5E5] transition-all ${
-                errors.email ? 'border-red-500' : ''
-              }`}
+              className={`mt-1 h-11 border-gray-200 text-black focus:border-[#00A5E5] focus:ring-[#00A5E5] transition-all ${errors.email ? 'border-red-500' : ''
+                }`}
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -318,9 +321,8 @@ export default function SignIn() {
             <label className="text-sm font-semibold text-[#005B9E]">
               Phone Number
             </label>
-            <div className={`flex items-center border ${
-              errors.phone ? 'border-red-500' : 'border-gray-200'
-            } rounded-md overflow-hidden focus-within:ring-1 focus-within:ring-[#00A5E5] mt-1`}>
+            <div className={`flex items-center border ${errors.phone ? 'border-red-500' : 'border-gray-200'
+              } rounded-md overflow-hidden focus-within:ring-1 focus-within:ring-[#00A5E5] mt-1`}>
               <select
                 className="bg-[#EAF4FA] text-[#005B9E] text-sm px-2 py-3 outline-none border-r border-gray-300"
                 defaultValue="+92"
@@ -361,9 +363,8 @@ export default function SignIn() {
               placeholder="Enter your password"
               value={form.password}
               onChange={handleChange}
-              className={`h-11 pr-10 text-black focus:border-[#00A5E5] focus:ring-[#00A5E5] transition-all ${
-                errors.password ? 'border-red-500' : 'border-gray-200'
-              }`}
+              className={`h-11 pr-10 text-black focus:border-[#00A5E5] focus:ring-[#00A5E5] transition-all ${errors.password ? 'border-red-500' : 'border-gray-200'
+                }`}
             />
             <button
               type="button"
