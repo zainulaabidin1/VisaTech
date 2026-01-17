@@ -213,8 +213,8 @@ export function Step6UploadPassport({
     >
       {/* Header */}
       <div className="flex-shrink-0 text-center mb-4">
-        <h2 className="text-2xl font-semibold text-[#005B9E]">Upload Your Passport</h2>
-        <p className="text-[#005B9E]/80 text-sm mt-1">
+        <h2 className="text-2xl font-semibold text-[#003366]">Upload Your Passport</h2>
+        <p className="text-[#003366]/80 text-sm mt-1">
           Ensure your passport image is <strong>clear, well-lit, and cropped</strong>.
         </p>
       </div>
@@ -238,7 +238,7 @@ export function Step6UploadPassport({
           {isUploading ? (
             <div className="flex flex-col items-center space-y-3">
               <Loader2 className="h-10 w-10 text-[#00A5E5] animate-spin" />
-              <p className="text-[#005B9E] font-medium">Uploading...</p>
+              <p className="text-[#003366] font-medium">Uploading...</p>
             </div>
           ) : previewUrl ? (
             <div className="flex flex-col items-center space-y-2 h-full w-full justify-center p-4 overflow-hidden">
@@ -250,7 +250,7 @@ export function Step6UploadPassport({
                   style={{ maxHeight: '100%' }}
                 />
               </div>
-              <p className="text-sm text-[#005B9E]/80 font-medium text-center truncate w-full max-w-xs flex-shrink-0">
+              <p className="text-sm text-[#003366]/80 font-medium text-center truncate w-full max-w-xs flex-shrink-0">
                 {file?.name}
               </p>
               <div className="flex items-center gap-2 text-green-500 flex-shrink-0">
@@ -265,7 +265,7 @@ export function Step6UploadPassport({
                   }`}
               />
               <div className="text-center">
-                <p className="text-[#005B9E] font-medium text-base">
+                <p className="text-[#003366] font-medium text-base">
                   Drag & drop here
                 </p>
                 <p className="text-sm text-[#00A5E5] mt-1 underline">
@@ -296,14 +296,14 @@ export function Step6UploadPassport({
         )}
 
         <div className="text-center space-y-1">
-          <p className="text-xs text-[#005B9E]/60">
+          <p className="text-xs text-[#64748B]">
             Max size: <strong>10MB</strong>. Formats: PNG, JPG, JPEG, PDF.
           </p>
         </div>
 
         <div className="flex justify-center gap-4">
-          <Button type="button" variant="outline" onClick={onPrev} disabled={isUploading} className="border-[#00A5E5] text-[#00A5E5] px-8 rounded-full">Back</Button>
-          <Button type="submit" disabled={!file || isUploading || !form.passportImage} className={`px-8 text-white rounded-full ${file && form.passportImage ? "bg-[#00A5E5] hover:bg-[#008fc7]" : "bg-gray-300"}`}>
+          <Button type="button" variant="outline" onClick={onPrev} disabled={isUploading} className="border-[#003366] text-[#003366] px-8 rounded-full hover:bg-[#F1F5F9]">Back</Button>
+          <Button type="submit" disabled={!file || isUploading || !form.passportImage} className={`px-8 text-white rounded-full ${file && form.passportImage ? "bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:opacity-90" : "bg-[#E2E8F0] text-[#94A3B8]"}`}>
             {isUploading ? "Uploading..." : file && form.passportImage ? "Continue" : "Upload File"}
           </Button>
         </div>

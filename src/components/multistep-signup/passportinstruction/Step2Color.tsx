@@ -21,7 +21,7 @@ export function Step2ColorInstruction({
     >
       {/* Header */}
       <div className="flex-shrink-0 mb-4 text-center">
-        <h2 className="text-2xl font-bold text-[#005B9E]">Color & Clarity</h2>
+        <h2 className="text-2xl font-bold text-[#003366]">Color & Clarity</h2>
       </div>
 
       {/* Main Content */}
@@ -32,15 +32,15 @@ export function Step2ColorInstruction({
           <div className="bg-white p-4 rounded-xl shadow-sm border border-[#00A5E5]/20">
             <div className="flex items-center gap-3 mb-2">
               <FileText className="w-5 h-5 text-[#00A5E5]" />
-              <h3 className="font-semibold text-[#005B9E]">Full Color Required</h3>
+              <h3 className="font-semibold text-[#003366]">Full Color Required</h3>
             </div>
             <p className="text-sm text-gray-600 leading-relaxed">
               Upload <span className="font-semibold">color</span> scans only. Black-and-white copies will be rejected.
             </p>
           </div>
 
-          <div className="bg-[#f1f7fc] p-4 rounded-xl border border-[#005B9E]/10 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-[#005B9E] mt-0.5" />
+          <div className="bg-[#f1f7fc] p-4 rounded-xl border border-[#003366]/10 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-[#003366] mt-0.5" />
             <p className="text-sm text-gray-700">
               Ensure image is <b>glare-free</b> and all details are readable.
             </p>
@@ -66,13 +66,13 @@ export function Step2ColorInstruction({
         <Button
           onClick={onPrev}
           variant="outline"
-          className="text-[#005B9E] border-[#005B9E] px-8 py-2.5 rounded-full"
+          className="text-[#003366] border-[#003366] px-8 py-2.5 rounded-full hover:bg-[#F1F5F9]"
         >
           Back
         </Button>
         <Button
           onClick={onNext}
-          className="bg-[#005B9E] hover:bg-[#00487a] text-white px-8 py-2.5 rounded-full shadow-md"
+          className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:opacity-90 text-white px-8 py-2.5 rounded-full shadow-md"
         >
           Continue
         </Button>

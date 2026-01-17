@@ -20,6 +20,7 @@ import {
   LogOut,
   FileText,
   AlertCircle,
+  Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,7 +104,9 @@ export default function AdminDashboard() {
   const [showAmountModal, setShowAmountModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showUserDetailModal, setShowUserDetailModal] = useState(false);
+  const [showTokenModal, setShowTokenModal] = useState(false);
   const [amountInput, setAmountInput] = useState("");
+  const [tokenInput, setTokenInput] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [rejectionNotes, setRejectionNotes] = useState("");
   const router = useRouter();
@@ -277,6 +280,42 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error("Error rejecting payment:", error);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSetToken = async () => {
+    if (!selectedUser || !tokenInput.trim()) return;
+
+    setActionLoading(true);
+    try {
+      const token = getAuthToken();
+      const response = await fetch(
+        `http://localhost:5000/api/admin/users/${selectedUser.id}/set-token`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ tokenNumber: tokenInput.trim() }),
+        }
+      );
+
+      const result = await response.json();
+      if (result.success) {
+        fetchUsers();
+        setShowTokenModal(false);
+        setTokenInput("");
+        setSelectedUser(null);
+        alert("Token number set successfully!");
+      } else {
+        alert(result.message || "Failed to set token number");
+      }
+    } catch (error) {
+      console.error("Error setting token:", error);
+      alert("Failed to set token number");
     } finally {
       setActionLoading(false);
     }
@@ -541,6 +580,22 @@ export default function AdminDashboard() {
                             </Button>
                           )}
 
+                          {/* Set Token Button - for users with passport */}
+                          {user.passport && (
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setTokenInput(user.passport?.tokenNumber || "");
+                                setShowTokenModal(true);
+                              }}
+                              className="bg-teal-500 hover:bg-teal-600 text-white"
+                            >
+                              <Ticket className="w-4 h-4 mr-1" />
+                              Token
+                            </Button>
+                          )}
+
                           {/* View Details Button */}
                           <Button
                             size="sm"
@@ -616,6 +671,84 @@ export default function AdminDashboard() {
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     "Set Amount"
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Set Token Modal */}
+      <AnimatePresence>
+        {showTokenModal && selectedUser && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={() => setShowTokenModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-teal-100 rounded-lg">
+                  <Ticket className="w-6 h-6 text-teal-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800">Set Token Number</h3>
+              </div>
+
+              <p className="text-slate-600 mb-4">
+                Setting token for <strong>{selectedUser.fullName || selectedUser.email}</strong>
+              </p>
+
+              {selectedUser.passport && (
+                <div className="bg-slate-50 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-slate-600">
+                    <span className="font-medium">Passport Number:</span>{" "}
+                    {selectedUser.passport.passportNumber || "N/A"}
+                  </p>
+                </div>
+              )}
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Token Number
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Enter token number (e.g., TKN-2024-001)"
+                  value={tokenInput}
+                  onChange={(e) => setTokenInput(e.target.value)}
+                  className="text-lg"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowTokenModal(false);
+                    setTokenInput("");
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSetToken}
+                  disabled={!tokenInput.trim() || actionLoading}
+                  className="flex-1 bg-teal-600 hover:bg-teal-700 text-white"
+                >
+                  {actionLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Set Token"
                   )}
                 </Button>
               </div>
@@ -852,7 +985,33 @@ export default function AdminDashboard() {
                           <p className="text-sm text-slate-500">Issuing Country</p>
                           <p className="font-medium text-slate-800">{selectedUser.passport.issuingCountry || selectedUser.passport.issuing_country || "N/A"}</p>
                         </div>
+                        {/* Token Number */}
+                        <div className="col-span-2 md:col-span-3">
+                          <p className="text-sm text-slate-500">Token Number</p>
+                          {(selectedUser.passport.tokenNumber || selectedUser.passport.token_number) ? (
+                            <span className="inline-flex items-center gap-2 px-3 py-1 bg-teal-100 text-teal-700 font-semibold rounded-full text-sm mt-1">
+                              <Ticket className="w-4 h-4" />
+                              {selectedUser.passport.tokenNumber || selectedUser.passport.token_number}
+                            </span>
+                          ) : (
+                            <p className="font-medium text-slate-400 italic">Not assigned yet</p>
+                          )}
+                        </div>
                       </div>
+
+                      {/* Passport Scan Image */}
+                      {(selectedUser.passport.passportImageUrl || selectedUser.passport.passport_image_url) && (
+                        <div className="mt-4">
+                          <p className="text-sm text-slate-500 mb-2 font-medium">Passport Scan</p>
+                          <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+                            <img
+                              src={`http://localhost:5000${selectedUser.passport.passportImageUrl || selectedUser.passport.passport_image_url}`}
+                              alt="Passport Scan"
+                              className="w-full max-h-96 object-contain"
+                            />
+                          </div>
+                        </div>
+                      )}
 
                       {/* Passport Images */}
                       <div className="grid md:grid-cols-2 gap-4 mt-4">

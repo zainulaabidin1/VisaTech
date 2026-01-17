@@ -186,73 +186,73 @@ export default function PaymentStatusPage() {
                     icon: Clock,
                     title: "Awaiting Contact",
                     subtitle: "Our representative will reach out soon",
-                    color: "from-amber-500 to-orange-500",
-                    bgColor: "bg-amber-50",
-                    borderColor: "border-amber-200",
-                    textColor: "text-amber-700",
+                    color: "from-[#F97316] to-[#EA580C]",
+                    bgColor: "bg-orange-50",
+                    borderColor: "border-[#F97316]/20",
+                    textColor: "text-[#F97316]",
                 };
             case "pending_payment":
                 return {
                     icon: CreditCard,
                     title: "Payment Required",
                     subtitle: "Complete your payment to continue",
-                    color: "from-blue-500 to-indigo-500",
+                    color: "from-[#003366] to-[#004D99]",
                     bgColor: "bg-blue-50",
-                    borderColor: "border-blue-200",
-                    textColor: "text-blue-700",
+                    borderColor: "border-[#003366]/20",
+                    textColor: "text-[#003366]",
                 };
             case "pending_verification":
                 return {
                     icon: FileText,
                     title: "Under Review",
                     subtitle: "We're verifying your payment",
-                    color: "from-purple-500 to-pink-500",
-                    bgColor: "bg-purple-50",
-                    borderColor: "border-purple-200",
-                    textColor: "text-purple-700",
+                    color: "from-[#F59E0B] to-[#D97706]",
+                    bgColor: "bg-amber-50",
+                    borderColor: "border-[#F59E0B]/20",
+                    textColor: "text-[#D97706]",
                 };
             case "approved":
                 return {
                     icon: CheckCircle,
                     title: "Payment Approved!",
                     subtitle: "Your account is now active",
-                    color: "from-emerald-500 to-green-500",
+                    color: "from-[#059669] to-[#047857]",
                     bgColor: "bg-emerald-50",
-                    borderColor: "border-emerald-200",
-                    textColor: "text-emerald-700",
+                    borderColor: "border-[#059669]/20",
+                    textColor: "text-[#059669]",
                 };
             case "rejected":
                 return {
                     icon: XCircle,
                     title: "Payment Issue",
                     subtitle: "Please review and resubmit",
-                    color: "from-red-500 to-rose-500",
+                    color: "from-[#DC2626] to-[#B91C1C]",
                     bgColor: "bg-red-50",
-                    borderColor: "border-red-200",
-                    textColor: "text-red-700",
+                    borderColor: "border-[#DC2626]/20",
+                    textColor: "text-[#DC2626]",
                 };
             default:
                 return {
                     icon: AlertCircle,
                     title: "Loading...",
                     subtitle: "",
-                    color: "from-gray-400 to-gray-500",
-                    bgColor: "bg-gray-50",
-                    borderColor: "border-gray-200",
-                    textColor: "text-gray-700",
+                    color: "from-[#64748B] to-[#475569]",
+                    bgColor: "bg-slate-50",
+                    borderColor: "border-[#E2E8F0]",
+                    textColor: "text-[#64748B]",
                 };
         }
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-[#003366] via-[#004D99] to-[#003366] flex items-center justify-center">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center"
                 >
-                    <Loader2 className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
+                    <Loader2 className="w-12 h-12 text-[#F59E0B] animate-spin mx-auto mb-4" />
                     <p className="text-white/80">Loading payment status...</p>
                 </motion.div>
             </div>
@@ -263,11 +263,11 @@ export default function PaymentStatusPage() {
     const StatusIcon = statusConfig.icon;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+        <div className="min-h-screen bg-gradient-to-br from-[#003366] via-[#004D99] to-[#003366]">
             {/* Decorative Elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#F59E0B]/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#059669]/10 rounded-full blur-3xl" />
             </div>
 
             <div className="relative z-10 container mx-auto px-4 py-8 max-w-2xl">
@@ -280,7 +280,7 @@ export default function PaymentStatusPage() {
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
                         Welcome, {user?.firstName || "User"}!
                     </h1>
-                    <p className="text-blue-200/80">Payment & Account Status</p>
+                    <p className="text-white/70">Payment & Account Status</p>
                 </motion.div>
 
                 {/* Main Status Card */}
@@ -315,13 +315,13 @@ export default function PaymentStatusPage() {
                                     exit={{ opacity: 0 }}
                                     className="text-center py-8"
                                 >
-                                    <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-[#F97316] to-[#EA580C] rounded-full flex items-center justify-center mx-auto mb-6">
                                         <Phone className="w-10 h-10 text-white" />
                                     </div>
                                     <h3 className="text-xl font-semibold text-white mb-3">
                                         Hang Tight!
                                     </h3>
-                                    <p className="text-blue-200/70 max-w-md mx-auto mb-6">
+                                    <p className="text-white/70 max-w-md mx-auto mb-6">
                                         Our customer representative will contact you shortly via call or SMS
                                         to discuss the details and finalize the payment amount.
                                     </p>
@@ -346,8 +346,8 @@ export default function PaymentStatusPage() {
                                     className="space-y-6"
                                 >
                                     {/* Amount to Pay */}
-                                    <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl p-6 border border-blue-400/30">
-                                        <p className="text-blue-200/70 text-sm mb-1">Amount to Pay</p>
+                                    <div className="bg-gradient-to-r from-[#003366]/20 to-[#004D99]/20 rounded-2xl p-6 border border-[#003366]/30">
+                                        <p className="text-white/70 text-sm mb-1">Amount to Pay</p>
                                         <p className="text-4xl font-bold text-white">
                                             PKR {payment.amount?.toLocaleString() || "0"}
                                         </p>
@@ -356,25 +356,25 @@ export default function PaymentStatusPage() {
                                     {/* Bank Details */}
                                     <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                         <div className="flex items-center gap-2 mb-4">
-                                            <Building2 className="w-5 h-5 text-blue-400" />
+                                            <Building2 className="w-5 h-5 text-[#F59E0B]" />
                                             <h4 className="font-semibold text-white">Payment Details</h4>
                                         </div>
 
                                         <div className="space-y-4">
                                             <div>
-                                                <p className="text-sm text-blue-200/60">Payment Method</p>
+                                                <p className="text-sm text-white/60">Payment Method</p>
                                                 <p className="text-white font-medium capitalize">
                                                     {payment.paymentMethod}
                                                 </p>
                                             </div>
 
                                             <div>
-                                                <p className="text-sm text-blue-200/60">Account Title</p>
+                                                <p className="text-sm text-white/60">Account Title</p>
                                                 <p className="text-white font-medium">{payment.bankAccountTitle}</p>
                                             </div>
 
                                             <div>
-                                                <p className="text-sm text-blue-200/60">Account Number</p>
+                                                <p className="text-sm text-white/60">Account Number</p>
                                                 <div className="flex items-center gap-2">
                                                     <p className="text-white font-mono text-lg">
                                                         {payment.bankAccountNumber}
@@ -384,9 +384,9 @@ export default function PaymentStatusPage() {
                                                         className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                                                     >
                                                         {copied ? (
-                                                            <Check className="w-4 h-4 text-green-400" />
+                                                            <Check className="w-4 h-4 text-[#059669]" />
                                                         ) : (
-                                                            <Copy className="w-4 h-4 text-blue-400" />
+                                                            <Copy className="w-4 h-4 text-[#F59E0B]" />
                                                         )}
                                                     </button>
                                                 </div>
@@ -397,12 +397,12 @@ export default function PaymentStatusPage() {
                                     {/* Upload Proof Section */}
                                     <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                         <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
-                                            <Upload className="w-5 h-5 text-blue-400" />
+                                            <Upload className="w-5 h-5 text-[#F59E0B]" />
                                             Submit Payment Proof
                                         </h4>
 
                                         {error && (
-                                            <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-3 mb-4">
+                                            <div className="bg-[#DC2626]/20 border border-[#DC2626]/30 rounded-xl p-3 mb-4">
                                                 <p className="text-red-200 text-sm">{error}</p>
                                             </div>
                                         )}
@@ -410,7 +410,7 @@ export default function PaymentStatusPage() {
                                         <div className="space-y-4">
                                             {/* Transaction ID Input */}
                                             <div>
-                                                <label className="block text-sm text-blue-200/70 mb-2">
+                                                <label className="block text-sm text-white/70 mb-2">
                                                     Transaction ID / Reference Number
                                                 </label>
                                                 <Input
@@ -424,13 +424,13 @@ export default function PaymentStatusPage() {
 
                                             {/* Screenshot Upload */}
                                             <div>
-                                                <label className="block text-sm text-blue-200/70 mb-2">
+                                                <label className="block text-sm text-white/70 mb-2">
                                                     Payment Screenshot
                                                 </label>
                                                 <div
                                                     className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${screenshotPreview
-                                                        ? "border-green-400/50 bg-green-500/10"
-                                                        : "border-white/20 hover:border-blue-400/50"
+                                                        ? "border-[#059669]/50 bg-[#059669]/10"
+                                                        : "border-white/20 hover:border-[#F59E0B]/50"
                                                         }`}
                                                 >
                                                     {screenshotPreview ? (
@@ -445,14 +445,14 @@ export default function PaymentStatusPage() {
                                                                     setScreenshotFile(null);
                                                                     setScreenshotPreview(null);
                                                                 }}
-                                                                className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white hover:bg-red-600"
+                                                                className="absolute top-2 right-2 p-1 bg-[#DC2626] rounded-full text-white hover:bg-[#B91C1C]"
                                                             >
                                                                 <XCircle className="w-4 h-4" />
                                                             </button>
                                                         </div>
                                                     ) : (
                                                         <label className="cursor-pointer block">
-                                                            <Upload className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                                                            <Upload className="w-8 h-8 text-[#F59E0B] mx-auto mb-2" />
                                                             <p className="text-white/70">Click to upload screenshot</p>
                                                             <p className="text-xs text-white/40 mt-1">PNG, JPG up to 5MB</p>
                                                             <input
@@ -470,7 +470,7 @@ export default function PaymentStatusPage() {
                                             <Button
                                                 onClick={handleSubmitProof}
                                                 disabled={submitting}
-                                                className="w-full py-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-xl"
+                                                className="w-full py-6 bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:from-[#D97706] hover:to-[#B45309] text-white font-semibold rounded-xl"
                                             >
                                                 {submitting ? (
                                                     <>
@@ -498,20 +498,20 @@ export default function PaymentStatusPage() {
                                     exit={{ opacity: 0 }}
                                     className="text-center py-8"
                                 >
-                                    <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-[#F59E0B] to-[#D97706] rounded-full flex items-center justify-center mx-auto mb-6">
                                         <FileText className="w-10 h-10 text-white" />
                                     </div>
                                     <h3 className="text-xl font-semibold text-white mb-3">
                                         Payment Submitted Successfully!
                                     </h3>
-                                    <p className="text-blue-200/70 max-w-md mx-auto mb-6">
+                                    <p className="text-white/70 max-w-md mx-auto mb-6">
                                         We're currently verifying your payment. You'll receive a confirmation
                                         email once your payment has been approved.
                                     </p>
-                                    <div className="bg-purple-500/20 border border-purple-400/30 rounded-xl p-4 inline-block">
+                                    <div className="bg-[#F59E0B]/20 border border-[#F59E0B]/30 rounded-xl p-4 inline-block">
                                         <div className="flex items-center gap-2">
-                                            <Clock className="w-5 h-5 text-purple-300" />
-                                            <span className="font-medium text-purple-200">
+                                            <Clock className="w-5 h-5 text-[#F59E0B]" />
+                                            <span className="font-medium text-[#F59E0B]">
                                                 Verification usually takes 1-2 business days
                                             </span>
                                         </div>
@@ -528,19 +528,19 @@ export default function PaymentStatusPage() {
                                     exit={{ opacity: 0 }}
                                     className="text-center py-8"
                                 >
-                                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-[#059669] to-[#047857] rounded-full flex items-center justify-center mx-auto mb-6">
                                         <CheckCircle className="w-10 h-10 text-white" />
                                     </div>
                                     <h3 className="text-xl font-semibold text-white mb-3">
                                         You're All Set!
                                     </h3>
-                                    <p className="text-blue-200/70 max-w-md mx-auto mb-6">
+                                    <p className="text-white/70 max-w-md mx-auto mb-6">
                                         Your payment has been verified and approved. You now have full access
                                         to all services.
                                     </p>
                                     <Button
                                         onClick={() => router.push("/")}
-                                        className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold px-8 py-6 rounded-xl"
+                                        className="bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#065F46] text-white font-semibold px-8 py-6 rounded-xl"
                                     >
                                         Go to Landing Page
                                         <ArrowRight className="w-5 h-5 ml-2" />
@@ -558,17 +558,17 @@ export default function PaymentStatusPage() {
                                     className="py-4"
                                 >
                                     {payment.adminNotes && (
-                                        <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-4 mb-6">
+                                        <div className="bg-[#DC2626]/20 border border-[#DC2626]/30 rounded-xl p-4 mb-6">
                                             <p className="text-red-200/70 text-sm mb-1">Reason:</p>
                                             <p className="text-white">{payment.adminNotes}</p>
                                         </div>
                                     )}
-                                    <p className="text-blue-200/70 text-center mb-6">
+                                    <p className="text-white/70 text-center mb-6">
                                         Please review the issue above and resubmit your payment proof.
                                     </p>
                                     <Button
                                         onClick={() => fetchPaymentStatus()}
-                                        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-6 rounded-xl"
+                                        className="w-full bg-gradient-to-r from-[#003366] to-[#004D99] hover:from-[#004D99] hover:to-[#003366] text-white font-semibold py-6 rounded-xl"
                                     >
                                         Refresh Status
                                     </Button>
@@ -585,9 +585,9 @@ export default function PaymentStatusPage() {
                     transition={{ delay: 0.3 }}
                     className="mt-6 text-center"
                 >
-                    <p className="text-blue-200/60 text-sm">
+                    <p className="text-white/60 text-sm">
                         Need help?{" "}
-                        <a href="mailto:support@visaa.com" className="text-blue-400 hover:underline">
+                        <a href="mailto:support@visaa.com" className="text-[#F59E0B] hover:underline">
                             Contact Support
                         </a>
                     </p>

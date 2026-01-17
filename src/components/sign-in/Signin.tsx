@@ -247,26 +247,26 @@ export default function SignIn() {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-[#E3F1FA]"
+      className="w-full max-w-md mx-auto bg-white backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-[#E2E8F0]"
     >
       {/* Header */}
-      <h2 className="text-3xl font-extrabold text-center text-[#005B9E] mb-2">
+      <h2 className="text-3xl font-extrabold text-center text-[#003366] mb-2">
         Welcome Back
       </h2>
-      <p className="text-center text-gray-500 mb-8 text-sm">
+      <p className="text-center text-[#64748B] mb-8 text-sm">
         Sign in to your account using Email or Phone
       </p>
 
       {/* Toggle Buttons */}
-      <div className="flex bg-[#EAF4FA] rounded-xl p-1 shadow-inner mb-8">
+      <div className="flex bg-[#F1F5F9] rounded-xl p-1 shadow-inner mb-8">
         {["email", "phone"].map((option) => (
           <button
             key={option}
             type="button"
             onClick={() => switchMethod(option as "email" | "phone")}
             className={`flex-1 py-2.5 rounded-xl cursor-pointer font-medium transition-all duration-300 ${method === option
-              ? "bg-gradient-to-r from-[#005B9E] to-[#00A5E5] text-white shadow-md"
-              : "text-[#005B9E]/70 hover:text-[#005B9E]"
+              ? "bg-gradient-to-r from-[#003366] to-[#004D99] text-white shadow-md"
+              : "text-[#64748B] hover:text-[#003366]"
               }`}
           >
             {option === "email" ? "Email" : "Phone Number"}
@@ -276,8 +276,8 @@ export default function SignIn() {
 
       {/* General Error Message */}
       {errors.general && (
-        <div className="rounded-lg bg-red-50 border border-red-200 p-3 mb-4">
-          <p className="text-red-800 text-sm font-medium flex items-center">
+        <div className="rounded-lg bg-red-50 border border-[#DC2626]/20 p-3 mb-4">
+          <p className="text-[#DC2626] text-sm font-medium flex items-center">
             <span className="mr-2">⚠️</span>
             {errors.general}
           </p>
@@ -293,7 +293,7 @@ export default function SignIn() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <label className="text-sm font-semibold text-[#005B9E]">
+            <label className="text-sm font-semibold text-[#003366]">
               Email Address
             </label>
             <Input
@@ -302,11 +302,11 @@ export default function SignIn() {
               placeholder="Enter your email"
               value={form.email}
               onChange={handleChange}
-              className={`mt-1 h-11 border-gray-200 text-black focus:border-[#00A5E5] focus:ring-[#00A5E5] transition-all ${errors.email ? 'border-red-500' : ''
+              className={`mt-1 h-11 border-[#E2E8F0] text-[#1E293B] focus:border-[#003366] focus:ring-[#003366] transition-all ${errors.email ? 'border-[#DC2626]' : ''
                 }`}
             />
             {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              <p className="text-[#DC2626] text-xs mt-1">{errors.email}</p>
             )}
           </motion.div>
         )}
@@ -318,13 +318,13 @@ export default function SignIn() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <label className="text-sm font-semibold text-[#005B9E]">
+            <label className="text-sm font-semibold text-[#003366]">
               Phone Number
             </label>
-            <div className={`flex items-center border ${errors.phone ? 'border-red-500' : 'border-gray-200'
-              } rounded-md overflow-hidden focus-within:ring-1 focus-within:ring-[#00A5E5] mt-1`}>
+            <div className={`flex items-center border ${errors.phone ? 'border-[#DC2626]' : 'border-[#E2E8F0]'
+              } rounded-md overflow-hidden focus-within:ring-1 focus-within:ring-[#003366] mt-1`}>
               <select
-                className="bg-[#EAF4FA] text-[#005B9E] text-sm px-2 py-3 outline-none border-r border-gray-300"
+                className="bg-[#F1F5F9] text-[#003366] text-sm px-2 py-3 outline-none border-r border-[#E2E8F0]"
                 defaultValue="+92"
               >
                 <option value="+92">🇵🇰 +92</option>
@@ -336,12 +336,12 @@ export default function SignIn() {
                 placeholder="300-123-4567"
                 value={form.phone}
                 onChange={handlePhoneChange}
-                className="flex-1 text-black py-2 px-3 text-sm outline-none h-11"
+                className="flex-1 text-[#1E293B] py-2 px-3 text-sm outline-none h-11"
                 maxLength={14}
               />
             </div>
             {errors.phone && (
-              <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+              <p className="text-[#DC2626] text-xs mt-1">{errors.phone}</p>
             )}
           </motion.div>
         )}
@@ -353,7 +353,7 @@ export default function SignIn() {
           transition={{ duration: 0.3 }}
           className="relative"
         >
-          <label className="text-sm font-semibold text-[#005B9E]">
+          <label className="text-sm font-semibold text-[#003366]">
             Password
           </label>
           <div className="relative mt-1">
@@ -363,13 +363,13 @@ export default function SignIn() {
               placeholder="Enter your password"
               value={form.password}
               onChange={handleChange}
-              className={`h-11 pr-10 text-black focus:border-[#00A5E5] focus:ring-[#00A5E5] transition-all ${errors.password ? 'border-red-500' : 'border-gray-200'
+              className={`h-11 pr-10 text-[#1E293B] focus:border-[#003366] focus:ring-[#003366] transition-all ${errors.password ? 'border-[#DC2626]' : 'border-[#E2E8F0]'
                 }`}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#005B9E] hover:text-[#00A5E5] transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#003366] transition-colors"
             >
               {showPassword ? (
                 <EyeOff size={18} strokeWidth={2} />
@@ -379,23 +379,23 @@ export default function SignIn() {
             </button>
           </div>
           {errors.password && (
-            <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            <p className="text-[#DC2626] text-xs mt-1">{errors.password}</p>
           )}
         </motion.div>
 
         {/* Remember + Forgot */}
-        <div className="flex justify-between items-center text-sm text-gray-600 mt-2">
+        <div className="flex justify-between items-center text-sm text-[#64748B] mt-2">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              className="w-4 h-4 cursor-pointer accent-[#005B9E]"
+              className="w-4 h-4 cursor-pointer accent-[#003366]"
             />
             Remember me
           </label>
           <button
             type="button"
             onClick={handleForgotPassword}
-            className="text-[#00A5E5] cursor-pointer font-medium hover:underline hover:text-[#008ac5] transition-all"
+            className="text-[#F59E0B] cursor-pointer font-medium hover:underline hover:text-[#D97706] transition-all"
           >
             Forgot password?
           </button>
@@ -405,7 +405,7 @@ export default function SignIn() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 mt-4 cursor-pointer bg-gradient-to-r from-[#FFD84A] to-[#F9C400] text-[#005B9E] font-semibold rounded-xl shadow-[0_4px_10px_rgba(249,196,0,0.4)] hover:shadow-[0_6px_14px_rgba(249,196,0,0.5)] hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 mt-4 cursor-pointer bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white font-semibold rounded-xl shadow-[0_4px_10px_rgba(245,158,11,0.4)] hover:shadow-[0_6px_14px_rgba(245,158,11,0.5)] hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <>
@@ -424,12 +424,12 @@ export default function SignIn() {
       </div>
 
       {/* Sign Up Link */}
-      <p className="text-center text-gray-500 mt-2 text-sm">
+      <p className="text-center text-[#64748B] mt-2 text-sm">
         Don't have an account?{" "}
         <button
           type="button"
           onClick={() => router.push('/signup')}
-          className="text-[#00A5E5] font-semibold cursor-pointer hover:underline"
+          className="text-[#003366] font-semibold cursor-pointer hover:underline"
         >
           Sign Up
         </button>

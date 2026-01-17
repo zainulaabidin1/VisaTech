@@ -20,7 +20,7 @@ export function Step3ClarityInstruction({
       transition={{ duration: 0.3 }}
     >
       <div className="flex-shrink-0 mb-4 text-center">
-        <h2 className="text-2xl font-bold text-[#005B9E]">Clarity & Lighting</h2>
+        <h2 className="text-2xl font-bold text-[#003366]">Clarity & Lighting</h2>
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row items-center justify-center gap-6 min-h-0">
@@ -35,8 +35,8 @@ export function Step3ClarityInstruction({
             <p className="text-sm text-gray-700">Avoid <span className="font-semibold">shadows</span>. Ensure even lighting.</p>
           </div>
 
-          <div className="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm border border-[#005B9E]/10">
-            <Eye className="w-5 h-5 mt-1 text-[#005B9E]" />
+          <div className="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm border border-[#003366]/10">
+            <Eye className="w-5 h-5 mt-1 text-[#003366]" />
             <p className="text-sm text-gray-700">Use <span className="font-semibold">natural light</span>. Avoid flash.</p>
           </div>
 
@@ -59,8 +59,8 @@ export function Step3ClarityInstruction({
       </div>
 
       <div className="flex justify-center gap-4 mt-6 flex-shrink-0">
-        <Button onClick={onPrev} variant="outline" className="text-[#005B9E] border-[#005B9E] px-8 py-2.5 rounded-full">Back</Button>
-        <Button onClick={onNext} className="bg-[#005B9E] hover:bg-[#00487a] text-white px-8 py-2.5 rounded-full shadow-md">Continue</Button>
+        <Button onClick={onPrev} variant="outline" className="text-[#003366] border-[#003366] px-8 py-2.5 rounded-full hover:bg-[#F1F5F9]">Back</Button>
+        <Button onClick={onNext} className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:opacity-90 text-white px-8 py-2.5 rounded-full shadow-md">Continue</Button>
       </div>
     </motion.div>
   );
